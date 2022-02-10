@@ -12,12 +12,14 @@ import com.anychart.scales.OrdinalColor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainactivity);
+        Objects.requireNonNull(getSupportActionBar()).hide();// 隐藏ActionBar
 
 
         AnyChartView anyChartView = findViewById(R.id.any_chart_view);
