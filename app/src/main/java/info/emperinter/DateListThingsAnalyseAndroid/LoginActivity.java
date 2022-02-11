@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         LoginBtn.setOnClickListener(view -> {
             Toast.makeText(this, user.getText()+"\n"+passwd.getText()+"\n"+host.getText(), Toast.LENGTH_SHORT).show();
             if(api.request(host.toString(),1,"2") != ""){
-                Intent changeToMain = new Intent(this,MainActivity.class);
+                Intent changeToMain = new Intent(this, TagCloudActivity.class);
                 startActivity(changeToMain);
             }
         });
