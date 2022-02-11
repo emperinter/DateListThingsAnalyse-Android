@@ -9,7 +9,7 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.DateListThingsAnalyseAndroid">
-        <activity android:name=".MainActivity"
+        <activity android:name=".TagCloudActivity"
                   android:exported="true">
         </activity>
         <activity android:name=".LoginActivity"
