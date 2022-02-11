@@ -39,8 +39,7 @@ public class MainActivity extends AppCompatActivity {
         tagCloud.colorRange().enabled(true);
         tagCloud.colorRange().colorLineSize(15d);
 
-//        对于我这个项目来说，category最好就是不同的数量值
-
+//      对于我这个项目来说，category最好就是不同的数量值
         List<DataEntry> data = new ArrayList<>();
         data.add(new CategoryValueDataEntry("China", "asia", 1383220000));
         data.add(new CategoryValueDataEntry("India", "asia", 1316000000));

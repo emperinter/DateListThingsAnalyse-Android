@@ -3,25 +3,46 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
+
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="DateListThingsAnalyse-Android"
+              android:textAlignment="center"
+              android:textColor="@color/black"
+              android:layout_marginTop="60dp"
+    />
     <EditText android:id="@+id/username"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:hint="username"
+              android:layout_marginTop="60dp"
     />
     <EditText android:id="@+id/password"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:hint="password"
+              android:layout_marginTop="8dp"
     />
     <EditText android:id="@+id/host"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:hint="host"
+              android:layout_marginTop="8dp"
     />
     <Button
-              android:id="@+id/login_btn"
-              android:layout_width="match_parent"
+            android:id="@+id/login_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/purple_700"
+            android:hint="Login Or Register"
+            android:textColorHint="#F44336"
+            android:layout_marginTop="60dp"
+    />
+    <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:hint="Login Or Register"
+              android:text="\@emperinter"
+              android:textAlignment="center"
+              android:textColor="#FF5722"
+              android:layout_marginTop="260dp"
     />
 </LinearLayout>
