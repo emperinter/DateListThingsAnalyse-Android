@@ -1,8 +1,15 @@
 package info.emperinter.DateListThingsAnalyseAndroid;
 
+
+import android.app.Fragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.CategoryValueDataEntry;
@@ -12,18 +19,20 @@ import com.anychart.scales.OrdinalColor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-public class TagCloudActivity extends AppCompatActivity {
+public class BFragment extends Fragment {
+
+    private TextView mTvTitle;
+    private Button Mret;
+    private AFragment aFragment;
+
+    @Nullable
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.mainactivity);
-        Objects.requireNonNull(getSupportActionBar()).hide();// 隐藏ActionBar
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_b,container,false);  //设置布局文件
 
-
-        AnyChartView anyChartView = findViewById(R.id.any_chart_view);
-        anyChartView.setProgressBar(findViewById(R.id.progress_bar));
+        AnyChartView anyChartView = view.findViewById(R.id.any_chart_view);
+        anyChartView.setProgressBar(view.findViewById(R.id.progress_bar));
 
         TagCloud tagCloud = AnyChart.tagCloud();
 
@@ -59,5 +68,35 @@ public class TagCloudActivity extends AppCompatActivity {
         tagCloud.data(data);
 
         anyChartView.setChart(tagCloud);
+
+        return  view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mTvTitle = (TextView) view.findViewById(R.id.tv_title);
+
+        Mret = (Button) view.findViewById(R.id.ret);
+
+        Mret.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(aFragment == null){
+                    aFragment = new AFragment();
+                }
+                //按返回键上一个状态保持原样！Tag:"a"在ContainerActivity中设置;
+                Fragment fragment = getFragmentManager().findFragmentByTag("b");
+                if(fragment != null && !fragment.isAdded()){
+                    getFragmentManager().beginTransaction().hide(fragment).add(R.id.fl_container,aFragment).addToBackStack(null).commitAllowingStateLoss();
+                    mTvTitle.setText("B被隐藏，A创建！");
+                }else {
+                    getFragmentManager().beginTransaction().replace(R.id.fl_container,aFragment).addToBackStack(null).commitAllowingStateLoss();
+                    mTvTitle.setText("A创建！");
+                }
+
+            }
+        });
+
     }
 }
