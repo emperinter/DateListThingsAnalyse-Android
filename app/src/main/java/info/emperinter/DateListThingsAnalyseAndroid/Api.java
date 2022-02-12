@@ -13,7 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-public class ApiActivity {
+public class Api {
     private String get_data = "";
 
     //    HTTP响应流转换成JSON

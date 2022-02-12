@@ -9,13 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 public class AFragment extends Fragment {
     private Button mBtnChange;
     private TextView mTvTitle;
-    private BFragment bFragment;
+    private TagCloudFragment tagCloudFragment;
     private  IOnMessageClick listener;//申明接口
 
     //传参
@@ -48,17 +47,17 @@ public class AFragment extends Fragment {
         mBtnChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(bFragment == null){
-                    bFragment = new BFragment();
+                if(tagCloudFragment == null){
+                    tagCloudFragment = new TagCloudFragment();
                 }
                 //按返回键上一个状态保持原样！Tag:"a"在ContainerActivity中设置;
                 Fragment aFragment = getFragmentManager().findFragmentByTag("a");
                 if(aFragment != null && !aFragment.isAdded()){
                     mTvTitle.setText("A被隐藏，B创建！");
-                    getFragmentManager().beginTransaction().hide(aFragment).add(R.id.fl_container,bFragment,"b").addToBackStack(null).commitAllowingStateLoss();
+                    getFragmentManager().beginTransaction().hide(aFragment).add(R.id.fl_container, tagCloudFragment,"b").addToBackStack(null).commitAllowingStateLoss();
                 }else {
                     mTvTitle.setText("B创建！");
-                    getFragmentManager().beginTransaction().replace(R.id.fl_container,bFragment,"b").addToBackStack(null).commitAllowingStateLoss();
+                    getFragmentManager().beginTransaction().replace(R.id.fl_container, tagCloudFragment,"b").addToBackStack(null).commitAllowingStateLoss();
                 }
 
             }

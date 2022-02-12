@@ -2,9 +2,14 @@ package info.emperinter.DateListThingsAnalyseAndroid;
 
 
 import android.app.Fragment;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,23 +25,39 @@ import com.anychart.scales.OrdinalColor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BFragment extends Fragment {
+public class TagCloudFragment extends Fragment {
 
     private TextView mTvTitle;
     private Button Mret;
     private AFragment aFragment;
+    private SQLiteDatabase db;
+    private DbHelper myDb;
+    private int user_id;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_b,container,false);  //设置布局文件
+
+        myDb = new DbHelper(getContext().getApplicationContext(),"user.db", null, 1);
+        db = myDb.getWritableDatabase();
+        Cursor cursor = db.query("user", null, null, null, null, null, null);
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            user_id = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));;
+        }
+        db.close();
+
+        Log.v("getStream-userid",String.valueOf(user_id));
 
         AnyChartView anyChartView = view.findViewById(R.id.any_chart_view);
         anyChartView.setProgressBar(view.findViewById(R.id.progress_bar));
 
         TagCloud tagCloud = AnyChart.tagCloud();
 
-        tagCloud.title("DateListThings KeyWords");
+//        tagCloud.title("DateListThings KeyWords");
+        tagCloud.title(user_id + "'s DateListThings KeyWords");
 
         OrdinalColor ordinalColor = OrdinalColor.instantiate();
         ordinalColor.colors(new String[] {
