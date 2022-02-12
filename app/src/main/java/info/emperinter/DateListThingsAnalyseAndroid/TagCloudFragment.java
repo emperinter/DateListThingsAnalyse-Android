@@ -1,7 +1,9 @@
 package info.emperinter.DateListThingsAnalyseAndroid;
 
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
@@ -45,6 +47,7 @@ public class TagCloudFragment extends Fragment {
     private String host = "";
     private String reqGet = "NO";
     private Api api = null;
+    private OkApi okApi = new OkApi();
     private String url;
     OkHttpClient client = new OkHttpClient();
 
@@ -53,7 +56,7 @@ public class TagCloudFragment extends Fragment {
     public static  TagCloudFragment newInstance(String title){
         TagCloudFragment fragment = new TagCloudFragment();
         Bundle bundle = new Bundle();
-        bundle.putString("title",title);
+        bundle.putString("getdata",title);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -67,6 +70,7 @@ public class TagCloudFragment extends Fragment {
             return response.body().string();
         }
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
@@ -99,11 +103,17 @@ public class TagCloudFragment extends Fragment {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+//
+//        api = new Api();
+//        reqGet = api.request(url);
 
-        api = new Api();
-        reqGet = api.request(url);
+        okApi.getData(url);
+        if(getArguments() != null){
+            reqGet = getArguments().getString("getdata");  //获取传递的参数；
+        }
 
-
+//
+//        reqGet = okApi.getData;
 
         Log.v("getStream-req-get-cloud",reqGet);
 
