@@ -1,6 +1,4 @@
 package info.emperinter.DateListThingsAnalyseAndroid;
-
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -40,7 +38,6 @@ public class LoginActivity extends AppCompatActivity {
         db = dbHelper.getWritableDatabase();
 
         Cursor cursor = db.query("user", null, null, null, null, null, null);
-//        cursor.moveToFirst();
         cursor.moveToLast();
         if (cursor.getCount() > 0) {
             int user_id = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
@@ -51,18 +48,19 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         LoginBtn.setOnClickListener(view -> {
-//          strUrl = "https://plan.emperinter.ga/api/user/query/?format=json&user_name=emperinter&user_passwd=emperinter";
             if (host.getText() != "" && user.getText() != "" && passwd.getText() != ""){
                 reqGet = api.request(host.getText()+"/api/user/query/?format=json&user_name="+user.getText()+"&user_passwd="+passwd.getText());
                 Log.v("reqGet-getStream",reqGet);
                 if(reqGet.contains("user_id")){
                     try {
-                        JSONArray user = new JSONArray(reqGet);
-                        userid = (int) user.getJSONObject(0).get("user_id");
+                        JSONArray userJson = new JSONArray(reqGet);
+                        userid = (int) userJson.getJSONObject(0).get("user_id");
                         Log.v("reqGet-getStream-userid",String.valueOf(userid));
 
                         ContentValues set_values = new ContentValues();
                         set_values.put("user_id", userid);
+                        set_values.put("user_name",user.getText().toString());
+                        set_values.put("host",host.getText().toString());
                         db.execSQL("DELETE  FROM user");
                         db.insert("user", null, set_values);
 
@@ -71,7 +69,6 @@ public class LoginActivity extends AppCompatActivity {
                         db.close();
 
                     } catch (JSONException e) {
-//                        e.printStackTrace();
                         Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show();
                     }
                 }else if(reqGet.contains("[]")){

@@ -4,7 +4,6 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -14,7 +13,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class Api {
-    private String get_data = "";
+    public String get_data = "";
 
     //    HTTP响应流转换成JSON
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -37,7 +36,6 @@ public class Api {
             public void run() {
                 try {
 //                    strUrl = "https://plan.emperinter.ga/api/user/query/?format=json&user_name=emperinter&user_passwd=emperinter";
-//                    strUrl = "https://plan.emperinter.ga/api/thing/query/?format=json&userid=10";
                     Log.v("HTTP-getStream",strUrl);
                     URL url = new URL(strUrl);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -49,11 +47,15 @@ public class Api {
                         Log.v("inputStream-getStream:" , inputStream.toString());
                         JSONArray json = null;
                         json = streamToJson(inputStream);
-
+                        Log.v("getStream-json-count", String.valueOf(json.length()));
+                        Log.v("getStream-json-all", json.toString());
 //                        System.out.printf("\n####################################################");
 //                        System.out.printf("getStream-things_id:\t"+json.getJSONObject(0).get("things_id") + "\t" + String.valueOf(json.length()) );
 //                        System.out.printf("\n####################################################");
                         get_data = json.toString();
+                        if(get_data == ""){
+                            get_data = "Get Data Erro!";
+                        }
                     } else {
                         get_data = "NotFound!";
                     }

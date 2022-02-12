@@ -1,14 +1,17 @@
 package info.emperinter.DateListThingsAnalyseAndroid;
 
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class ContainerActivity extends AppCompatActivity implements AFragment.IOnMessageClick{
+import java.util.Objects;
 
-    private AFragment aFragment;
+public class ContainerActivity extends AppCompatActivity implements LineAnalyseFragment.IOnMessageClick{
+
+    private TagCloudFragment tagFragment;
 
     private TextView mTvTitle;
 
@@ -16,13 +19,14 @@ public class ContainerActivity extends AppCompatActivity implements AFragment.IO
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_container);
+        Objects.requireNonNull(getSupportActionBar()).hide();// 隐藏ActionBar
 
         mTvTitle = (TextView) findViewById(R.id.tv_title);
 
-        aFragment = new AFragment().newInstance("我是参数"); //传参
+        tagFragment = new TagCloudFragment().newInstance("我是参数"); //传参
 
         //把AFragment添加到Activity中，记得调用commit;"a"是在按返回键上一个状态保持原样！方便后续可以找到！
-        getFragmentManager().beginTransaction().add(R.id.fl_container,aFragment,"a").commitAllowingStateLoss();
+        getFragmentManager().beginTransaction().add(R.id.fl_container,tagFragment,"tag").commitAllowingStateLoss();
     }
 
     //不推荐
@@ -36,4 +40,7 @@ public class ContainerActivity extends AppCompatActivity implements AFragment.IO
     public void onClick(String text) {
         mTvTitle.setText(text);
     }
+
+
+
 }
