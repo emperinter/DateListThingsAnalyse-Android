@@ -1,9 +1,8 @@
 package info.emperinter.DateListThingsAnalyseAndroid;
 
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.Fragment;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
@@ -25,6 +24,8 @@ import com.anychart.chart.common.dataentry.CategoryValueDataEntry;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.charts.TagCloud;
 import com.anychart.scales.OrdinalColor;
+import info.emperinter.DateListThingsAnalyseAndroid.API.HttpResponseCallBack;
+import info.emperinter.DateListThingsAnalyseAndroid.API.Singleton;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -33,6 +34,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class TagCloudFragment extends Fragment {
@@ -42,7 +44,6 @@ public class TagCloudFragment extends Fragment {
     private LineAnalyseFragment lineAnalyseFragment;
     private SQLiteDatabase db;
     private DbHelper myDb;
-    private int user_id;
     private String username = "";
     private String host = "";
     private String reqGet = "NO";
@@ -51,6 +52,11 @@ public class TagCloudFragment extends Fragment {
     private String url;
     OkHttpClient client = new OkHttpClient();
 
+    // keyword的HashMap
+    HashMap<String, Integer> KeyMap = new HashMap<String, Integer>();
+    private int user_id,things_id;
+    private String key = "";
+    private List<DataEntry> data = new ArrayList<>();
 
     //传参
     public static  TagCloudFragment newInstance(String title){
@@ -61,17 +67,8 @@ public class TagCloudFragment extends Fragment {
         return fragment;
     }
 
-    String getResponse(String url) throws IOException {
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
 
-        try (Response response = client.newCall(request).execute()) {
-            return response.body().string();
-        }
-    }
-
-
+    @SuppressLint("LongLogTag")
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
     @Override
@@ -90,92 +87,80 @@ public class TagCloudFragment extends Fragment {
         }
         db.close();
 
-//                    strUrl = "https://plan.emperinter.ga/api/thing/query/?format=json&userid=10";
+
         //json获取
         url = host+"/api/thing/query/?format=json&userid="+user_id;
-        Log.v("getStream-url",url);
 
+        try {
+            Singleton.getInstance().doPostRequest(url, new HttpResponseCallBack() {
+                @Override
+                public void getResponse(String response) throws JSONException {
+                    Log.v("getStream-getused", response);
+                    reqGet = response;
+                    if(reqGet.contains("things_id")){
+                        JSONArray userJson = new JSONArray(reqGet);
+                        Log.v("getStream-userjson", String.valueOf(userJson.length()));
 
+                        for (int i = 0;i < userJson.length();i++){
+                            things_id = (int) userJson.getJSONObject(i).get("things_id");
+                            key = userJson.getJSONObject(i).getString("key");
+                            if(KeyMap.containsKey(key)  ){
+                                KeyMap.put(key,KeyMap.get(key) + 1);
+                            }else if(key != "nan" && key != ""){
+                                KeyMap.put(key,1);
+                            }
+                        }
 
-//        try {
-//            getResponse(url);
-//            Log.v("ok-http-getStream",reqGet);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        api = new Api();
-//        reqGet = api.request(url);
+                        TagChart(view,KeyMap);
 
-        okApi.getData(url);
-        if(getArguments() != null){
-            reqGet = getArguments().getString("getdata");  //获取传递的参数；
-        }
-
-//
-//        reqGet = okApi.getData;
-
-        Log.v("getStream-req-get-cloud",reqGet);
-
-        if(reqGet.contains("things_id")){
-            try {
-                JSONArray userJson = new JSONArray(reqGet);
-                Log.v("getStream-userjson", String.valueOf(userJson.length()));
-//                userid = (int) userJson.getJSONObject(0).get("user_id");
-//                Log.v("reqGet-getStream-userid",String.valueOf(userid));
-            } catch (JSONException e) {
-//                Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity().getBaseContext(),e.toString(),Toast.LENGTH_SHORT).show();
-            }
-        }else if(reqGet.contains("[]")){
-            Toast.makeText(getActivity().getBaseContext(),"username or password is wrong !",Toast.LENGTH_SHORT).show();
-        }else if(reqGet.contains("HTTP")){
-            Toast.makeText(getActivity().getBaseContext()," Cleartext HTTP traffic to not permitted",Toast.LENGTH_SHORT).show();
-        }else {
-            Toast.makeText(getActivity().getBaseContext(),"Please Input Your Information !"+reqGet,Toast.LENGTH_SHORT).show();
+                    }else if(reqGet.contains("[]")){
+                        Toast.makeText(getActivity().getBaseContext(),"username or password is wrong !",Toast.LENGTH_SHORT).show();
+                    }else if(reqGet.contains("HTTP")){
+                        Toast.makeText(getActivity().getBaseContext()," Cleartext HTTP traffic to not permitted",Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(getActivity().getBaseContext(),"Please Input Your Information !"+reqGet,Toast.LENGTH_SHORT).show();
+                    }
+                    Log.v("getStreamPOSTERreqGetIN", reqGet);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
 
-        AnyChartView anyChartView = view.findViewById(R.id.any_chart_view);
-        anyChartView.setProgressBar(view.findViewById(R.id.progress_bar));
-
-        TagCloud tagCloud = AnyChart.tagCloud();
-
-        tagCloud.title(username + "TagCloud");
-        OrdinalColor ordinalColor = OrdinalColor.instantiate();
-        ordinalColor.colors(new String[] {
-                "#26959f", "#f18126", "#3b8ad8", "#60727b", "#e24b26"
-        });
-        tagCloud.colorScale(ordinalColor);
-        tagCloud.angles(new Double[] {-90d, 0d, 90d});
-
-        tagCloud.colorRange().enabled(true);
-        tagCloud.colorRange().colorLineSize(15d);
-
-//      对于我这个项目来说，category最好就是不同的数量值
-        List<DataEntry> data = new ArrayList<>();
-        data.add(new CategoryValueDataEntry("China", "asia", 1383220000));
-        data.add(new CategoryValueDataEntry("India", "asia", 1316000000));
-        data.add(new CategoryValueDataEntry("United States", "america", 324982000));
-        data.add(new CategoryValueDataEntry("Indonesia", "asia", 263510000));
-        data.add(new CategoryValueDataEntry("Brazil", "america", 207505000));
-        data.add(new CategoryValueDataEntry("Pakistan", "asia", 196459000));
-        data.add(new CategoryValueDataEntry("Nigeria", "africa", 191836000));
-        data.add(new CategoryValueDataEntry("Bangladesh", "asia", 162459000));
-        data.add(new CategoryValueDataEntry("Russia", "europe", 146804372));
-        data.add(new CategoryValueDataEntry("Japan", "asia", 126790000));
-        data.add(new CategoryValueDataEntry("Mexico", "america", 123518000));
-        data.add(new CategoryValueDataEntry("Ethiopia", "africa", 104345000));
-        data.add(new CategoryValueDataEntry("Philippines", "asia", 104037000));
-        data.add(new CategoryValueDataEntry("Egypt", "africa", 93013300));
-
-        tagCloud.data(data);
-
-        anyChartView.setChart(tagCloud);
 
         return  view;
     }
 
+    public void TagChart(View view,HashMap<String,Integer> KeyMap){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // 图标基本设置
+                AnyChartView anyChartView = view.findViewById(R.id.any_chart_view);
+                anyChartView.setProgressBar(view.findViewById(R.id.progress_bar));
+                TagCloud tagCloud = AnyChart.tagCloud();
+                tagCloud.title(username + "TagCloud");
+                OrdinalColor ordinalColor = OrdinalColor.instantiate();
+                ordinalColor.colors(new String[] {
+                        "#26959f", "#f18126", "#3b8ad8", "#60727b", "#e24b26"
+                });
+                tagCloud.colorScale(ordinalColor);
+                tagCloud.angles(new Double[] {-90d, 0d, 90d});
+
+                tagCloud.colorRange().enabled(true);
+                tagCloud.colorRange().colorLineSize(15d);
+
+                for (String i : KeyMap.keySet()) {
+                    Log.v("reqGet-getStream-keyid",String.valueOf(i));
+                    Log.v("reqGet-getStream-key",String.valueOf(KeyMap.get(i)));
+                    data.add(new CategoryValueDataEntry(i,String.valueOf(KeyMap.get(i)),KeyMap.get(i)));
+                }
+                tagCloud.data(data);
+                anyChartView.setChart(tagCloud);
+            }
+        });
+    }
 
 
     @Override
@@ -189,10 +174,6 @@ public class TagCloudFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(lineAnalyseFragment == null){
-//                    api = new Api();
-//                    reqGet = api.request(url);
-
-                    Log.v("getStream-req-get-cloud",reqGet);
                     lineAnalyseFragment = new LineAnalyseFragment();
                 }
                 //按返回键上一个状态保持原样！Tag:"a"在ContainerActivity中设置;
@@ -204,7 +185,6 @@ public class TagCloudFragment extends Fragment {
                     getFragmentManager().beginTransaction().replace(R.id.fl_container, lineAnalyseFragment).addToBackStack(null).commitAllowingStateLoss();
                     mTvTitle.setText("LineAnalyse");
                 }
-
             }
         });
     }
