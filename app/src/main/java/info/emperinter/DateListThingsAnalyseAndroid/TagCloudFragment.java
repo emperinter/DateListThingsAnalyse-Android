@@ -26,9 +26,6 @@ import com.anychart.charts.TagCloud;
 import com.anychart.scales.OrdinalColor;
 import info.emperinter.DateListThingsAnalyseAndroid.API.HttpResponseCallBack;
 import info.emperinter.DateListThingsAnalyseAndroid.API.Singleton;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -47,14 +44,11 @@ public class TagCloudFragment extends Fragment {
     private String username = "";
     private String host = "";
     private String reqGet = "NO";
-    private Api api = null;
-    private OkApi okApi = new OkApi();
     private String url;
-    OkHttpClient client = new OkHttpClient();
 
     // keyword的HashMap
     HashMap<String, Integer> KeyMap = new HashMap<String, Integer>();
-    private int user_id,things_id;
+    private int user_id;
     private String key = "";
     private List<DataEntry> data = new ArrayList<>();
 
@@ -95,18 +89,14 @@ public class TagCloudFragment extends Fragment {
             Singleton.getInstance().doPostRequest(url, new HttpResponseCallBack() {
                 @Override
                 public void getResponse(String response) throws JSONException {
-                    Log.v("getStream-getused", response);
                     reqGet = response;
                     if(reqGet.contains("things_id")){
                         JSONArray userJson = new JSONArray(reqGet);
-                        Log.v("getStream-userjson", String.valueOf(userJson.length()));
-
                         for (int i = 0;i < userJson.length();i++){
-                            things_id = (int) userJson.getJSONObject(i).get("things_id");
                             key = userJson.getJSONObject(i).getString("key");
-                            if(KeyMap.containsKey(key)  ){
+                            if(KeyMap.containsKey(key)){
                                 KeyMap.put(key,KeyMap.get(key) + 1);
-                            }else if(key != "nan" && key != ""){
+                            }else if(!key.contains("nan") && key != ""){
                                 KeyMap.put(key,1);
                             }
                         }
@@ -120,7 +110,6 @@ public class TagCloudFragment extends Fragment {
                     }else {
                         Toast.makeText(getActivity().getBaseContext(),"Please Input Your Information !"+reqGet,Toast.LENGTH_SHORT).show();
                     }
-                    Log.v("getStreamPOSTERreqGetIN", reqGet);
                 }
             });
         } catch (IOException e) {
@@ -143,7 +132,7 @@ public class TagCloudFragment extends Fragment {
                 tagCloud.title(username + "TagCloud");
                 OrdinalColor ordinalColor = OrdinalColor.instantiate();
                 ordinalColor.colors(new String[] {
-                        "#26959f", "#f18126", "#3b8ad8", "#60727b", "#e24b26"
+                        "#26959f", "#f18126", "#3b8ad8", "#60727b", "#e24b26","#FF03DAC5"
                 });
                 tagCloud.colorScale(ordinalColor);
                 tagCloud.angles(new Double[] {-90d, 0d, 90d});

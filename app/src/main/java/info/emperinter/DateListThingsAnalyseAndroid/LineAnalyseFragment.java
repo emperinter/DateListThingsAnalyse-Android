@@ -18,9 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
+import com.anychart.chart.common.dataentry.CategoryValueDataEntry;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Cartesian;
+import com.anychart.charts.TagCloud;
 import com.anychart.core.cartesian.series.Line;
 import com.anychart.data.Mapping;
 import com.anychart.data.Set;
@@ -28,10 +30,15 @@ import com.anychart.enums.Anchor;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.TooltipPositionMode;
 import com.anychart.graphics.vector.Stroke;
+import com.anychart.scales.OrdinalColor;
+import info.emperinter.DateListThingsAnalyseAndroid.API.HttpResponseCallBack;
+import info.emperinter.DateListThingsAnalyseAndroid.API.Singleton;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class LineAnalyseFragment extends Fragment {
@@ -42,11 +49,27 @@ public class LineAnalyseFragment extends Fragment {
     private SQLiteDatabase db;
     private DbHelper myDb;
     private int user_id;
-    private String username = "";
     private String host = "";
+    private String username;
     private String reqGet = "NO";
     private Api api = null;
     private String url;
+
+
+
+    private List<DataEntry> data = new ArrayList<>();
+    //things_id,value
+    private HashMap<Integer, String> dateMap = new HashMap<Integer, String>();
+    private HashMap<Integer, Integer> processMap = new HashMap<Integer, Integer>();
+    private HashMap<Integer, Integer> emotionMap = new HashMap<Integer, Integer>();
+    private HashMap<Integer, Integer> energyMap = new HashMap<Integer, Integer>();
+
+    private int things_id;
+    private int process;
+    private int emotion;
+    private int energy;
+    private String get_date;
+
     //传参
     public static LineAnalyseFragment newInstance(String title){
         LineAnalyseFragment fragment = new LineAnalyseFragment();
@@ -66,7 +89,6 @@ public class LineAnalyseFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.lineanalyse_fragment,container,false);  //设置布局文件
-        Log.d("LineAnalyseFragment","-----onCreateView-----");
 
 
         //user_id 获取
@@ -83,139 +105,130 @@ public class LineAnalyseFragment extends Fragment {
 
         //json获取
         url = host+"/api/thing/query/?format=json&userid="+user_id;
-        Log.v("getStream-url",url);
 
-        api = new Api();
-        reqGet = api.request(url);
 
-        Log.v("getStream-req-get-cloud",reqGet);
-        Log.v("getStream-req-get-cloud",api.get_data);
+        try {
+            Singleton.getInstance().doPostRequest(url, new HttpResponseCallBack() {
+                @Override
+                public void getResponse(String response) throws JSONException {
+                    reqGet = response;
+                    if(reqGet.contains("things_id")){
+                        JSONArray userJson = new JSONArray(reqGet);
+                        for (int i = 0;i < userJson.length();i++){
+                            things_id = userJson.getJSONObject(i).getInt("things_id");
+                            get_date = userJson.getJSONObject(i).getString("date");
+                            process = userJson.getJSONObject(i).getInt("process");
+                            emotion = userJson.getJSONObject(i).getInt("emotion");
+                            energy = userJson.getJSONObject(i).getInt("energy");
 
-        if(reqGet.contains("things_id")){
-            try {
-                JSONArray userJson = new JSONArray(reqGet);
-                Log.v("getStream-userjson", String.valueOf(userJson.length()));
-//                userid = (int) userJson.getJSONObject(0).get("user_id");
-//                Log.v("reqGet-getStream-userid",String.valueOf(userid));
-            } catch (JSONException e) {
-//                Toast.makeText(this,e.toString(),Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity().getBaseContext(),e.toString(),Toast.LENGTH_SHORT).show();
-            }
-        }else if(reqGet.contains("[]")){
-            Toast.makeText(getActivity().getBaseContext(),"username or password is wrong !",Toast.LENGTH_SHORT).show();
-        }else if(reqGet.contains("HTTP")){
-            Toast.makeText(getActivity().getBaseContext()," Cleartext HTTP traffic to not permitted",Toast.LENGTH_SHORT).show();
-        }else {
-            Toast.makeText(getActivity().getBaseContext(),"Please Input Your Information !"+reqGet,Toast.LENGTH_SHORT).show();
+                            dateMap.put(things_id,get_date);
+                            processMap.put(things_id,process);
+                            emotionMap.put(things_id,emotion);
+                            energyMap.put(things_id,energy);
+                        }
+
+
+                        // 弄3个HashMap依次对应相关数值
+
+                        LineChart(view,dateMap,processMap,emotionMap,energyMap);
+
+                    }else if(reqGet.contains("[]")){
+                        Toast.makeText(getActivity().getBaseContext(),"username or password is wrong !",Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getActivity().getBaseContext(),"SomeThing Wrong !",Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-
-        AnyChartView anyChartView = view.findViewById(R.id.any_chart_view);
-        anyChartView.setProgressBar(view.findViewById(R.id.progress_bar));
-
-        Cartesian cartesian = AnyChart.line();
-
-        cartesian.animation(true);
-
-        cartesian.padding(10d, 20d, 5d, 20d);
-
-        cartesian.crosshair().enabled(true);
-        cartesian.crosshair()
-                .yLabel(true)
-                // TODO ystroke
-                .yStroke((Stroke) null, null, null, (String) null, (String) null);
-
-        cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
-
-        cartesian.title("DateListThingsAnalyse ");
-
-        cartesian.yAxis(0).title("Rank(m/10)");
-        cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
-
-        List<DataEntry> seriesData = new ArrayList<>();
-        seriesData.add(new CustomDataEntry("1986", 3.6, 2.3, 2.8));
-        seriesData.add(new CustomDataEntry("1987", 7.1, 4.0, 4.1));
-        seriesData.add(new CustomDataEntry("1988", 8.5, 6.2, 5.1));
-        seriesData.add(new CustomDataEntry("1989", 9.2, 11.8, 6.5));
-        seriesData.add(new CustomDataEntry("1990", 10.1, 13.0, 12.5));
-        seriesData.add(new CustomDataEntry("1991", 11.6, 13.9, 18.0));
-        seriesData.add(new CustomDataEntry("1992", 16.4, 18.0, 21.0));
-        seriesData.add(new CustomDataEntry("1993", 18.0, 23.3, 20.3));
-        seriesData.add(new CustomDataEntry("1994", 13.2, 24.7, 19.2));
-        seriesData.add(new CustomDataEntry("1986", 3.6, 2.3, 2.8));
-        seriesData.add(new CustomDataEntry("1987", 7.1, 4.0, 4.1));
-        seriesData.add(new CustomDataEntry("1988", 8.5, 6.2, 5.1));
-        seriesData.add(new CustomDataEntry("1989", 9.2, 11.8, 6.5));
-        seriesData.add(new CustomDataEntry("1990", 10.1, 13.0, 12.5));
-        seriesData.add(new CustomDataEntry("1991", 11.6, 13.9, 18.0));
-        seriesData.add(new CustomDataEntry("1992", 16.4, 18.0, 21.0));
-        seriesData.add(new CustomDataEntry("1993", 18.0, 23.3, 20.3));
-        seriesData.add(new CustomDataEntry("1994", 13.2, 24.7, 19.2));
-        seriesData.add(new CustomDataEntry("2001",7,8,9));
-        seriesData.add(new CustomDataEntry("3001",7,8,9));
-        seriesData.add(new CustomDataEntry("4001",7,8,9));
-        seriesData.add(new CustomDataEntry("6001",7,8,9));
-        seriesData.add(new CustomDataEntry("6002",7,8,9));
-        seriesData.add(new CustomDataEntry("6003",7,8,9));
-        seriesData.add(new CustomDataEntry("6004",7,8,9));
-        seriesData.add(new CustomDataEntry("6005",7,8,9));
-        seriesData.add(new CustomDataEntry("6006",7,8,9));
-        seriesData.add(new CustomDataEntry("6007",7,8,9));
-        seriesData.add(new CustomDataEntry("6008",7,8,9));
-        seriesData.add(new CustomDataEntry("6009",7,8,9));
-        seriesData.add(new CustomDataEntry("6010",7,8,9));
-        seriesData.add(new CustomDataEntry("6011",7,8,9));
-
-
-        Set set = Set.instantiate();
-        set.data(seriesData);
-        Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
-        Mapping series2Mapping = set.mapAs("{ x: 'x', value: 'value2' }");
-        Mapping series3Mapping = set.mapAs("{ x: 'x', value: 'value3' }");
-
-        Line series1 = cartesian.line(series1Mapping);
-        series1.name("Process");
-        series1.hovered().markers().enabled(true);
-        series1.hovered().markers()
-                .type(MarkerType.CIRCLE)
-                .size(4d);
-        series1.tooltip()
-                .position("right")
-                .anchor(Anchor.LEFT_CENTER)
-                .offsetX(5d)
-                .offsetY(5d);
-
-        Line series2 = cartesian.line(series2Mapping);
-        series2.name("Emotion");
-        series2.hovered().markers().enabled(true);
-        series2.hovered().markers()
-                .type(MarkerType.CIRCLE)
-                .size(4d);
-        series2.tooltip()
-                .position("right")
-                .anchor(Anchor.LEFT_CENTER)
-                .offsetX(5d)
-                .offsetY(5d);
-
-        Line series3 = cartesian.line(series3Mapping);
-        series3.name("Energy");
-        series3.hovered().markers().enabled(true);
-        series3.hovered().markers()
-                .type(MarkerType.CIRCLE)
-                .size(4d);
-        series3.tooltip()
-                .position("right")
-                .anchor(Anchor.LEFT_CENTER)
-                .offsetX(5d)
-                .offsetY(5d);
-
-        cartesian.legend().enabled(true);
-        cartesian.legend().fontSize(13d);
-        cartesian.legend().padding(0d, 0d, 10d, 0d);
-
-        anyChartView.setChart(cartesian);
-
         return  view;
+    }
+
+    public void LineChart(View view, HashMap<Integer,String> dateMap,HashMap<Integer,Integer> processMap,HashMap<Integer,Integer> emotionMap,HashMap<Integer,Integer> energyMap){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AnyChartView anyChartView = view.findViewById(R.id.any_chart_view);
+                anyChartView.setProgressBar(view.findViewById(R.id.progress_bar));
+
+                Cartesian cartesian = AnyChart.line();
+
+                cartesian.animation(true);
+
+                cartesian.padding(10d, 20d, 5d, 20d);
+
+                cartesian.crosshair().enabled(true);
+                cartesian.crosshair()
+                        .yLabel(true)
+                        // TODO ystroke
+                        .yStroke((Stroke) null, null, null, (String) null, (String) null);
+
+                cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+
+                cartesian.title("DateListThingsAnalyse ");
+
+                cartesian.yAxis(0).title("Rank(10)");
+                cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
+
+                List<DataEntry> seriesData = new ArrayList<>();
+//                seriesData.add(new CustomDataEntry("1986", 3.6, 2.3, 2.8));
+
+                for (Integer i : dateMap.keySet()) {
+                    seriesData.add(new CustomDataEntry(dateMap.get(i), processMap.get(i), emotionMap.get(i), energyMap.get(i)));
+                }
+
+
+                Set set = Set.instantiate();
+                set.data(seriesData);
+                Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
+                Mapping series2Mapping = set.mapAs("{ x: 'x', value: 'value2' }");
+                Mapping series3Mapping = set.mapAs("{ x: 'x', value: 'value3' }");
+
+                Line series1 = cartesian.line(series1Mapping);
+                series1.name("Process");
+                series1.hovered().markers().enabled(true);
+                series1.hovered().markers()
+                        .type(MarkerType.CIRCLE)
+                        .size(4d);
+                series1.tooltip()
+                        .position("right")
+                        .anchor(Anchor.LEFT_CENTER)
+                        .offsetX(5d)
+                        .offsetY(5d);
+
+                Line series2 = cartesian.line(series2Mapping);
+                series2.name("Emotion");
+                series2.hovered().markers().enabled(true);
+                series2.hovered().markers()
+                        .type(MarkerType.CIRCLE)
+                        .size(4d);
+                series2.tooltip()
+                        .position("right")
+                        .anchor(Anchor.LEFT_CENTER)
+                        .offsetX(5d)
+                        .offsetY(5d);
+
+                Line series3 = cartesian.line(series3Mapping);
+                series3.name("Energy");
+                series3.hovered().markers().enabled(true);
+                series3.hovered().markers()
+                        .type(MarkerType.CIRCLE)
+                        .size(4d);
+                series3.tooltip()
+                        .position("right")
+                        .anchor(Anchor.LEFT_CENTER)
+                        .offsetX(5d)
+                        .offsetY(5d);
+
+                cartesian.legend().enabled(true);
+                cartesian.legend().fontSize(13d);
+                cartesian.legend().padding(0d, 0d, 10d, 0d);
+
+                anyChartView.setChart(cartesian);
+            }
+        });
     }
 
     private class CustomDataEntry extends ValueDataEntry {
