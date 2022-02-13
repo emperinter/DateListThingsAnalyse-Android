@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,8 +36,9 @@ import java.util.List;
 public class TagCloudFragment extends Fragment {
 
     private TextView mTvTitle;
-    private Button Mret;
+    private Button Mline,Madd;
     private LineAnalyseFragment lineAnalyseFragment;
+    private DataFragment dataFragment;
     private SQLiteDatabase db;
     private DbHelper myDb;
     private String username = "";
@@ -86,7 +86,7 @@ public class TagCloudFragment extends Fragment {
         url = host+"/api/thing/query/?format=json&userid="+user_id;
 
         try {
-            Singleton.getInstance().doPostRequest(url, new HttpResponseCallBack() {
+            Singleton.getInstance().doGetRequest(url, new HttpResponseCallBack() {
                 @Override
                 public void getResponse(String response) throws JSONException {
                     reqGet = response;
@@ -141,8 +141,6 @@ public class TagCloudFragment extends Fragment {
                 tagCloud.colorRange().colorLineSize(15d);
 
                 for (String i : KeyMap.keySet()) {
-                    Log.v("reqGet-getStream-keyid",String.valueOf(i));
-                    Log.v("reqGet-getStream-key",String.valueOf(KeyMap.get(i)));
                     data.add(new CategoryValueDataEntry(i,String.valueOf(KeyMap.get(i)),KeyMap.get(i)));
                 }
                 tagCloud.data(data);
@@ -157,22 +155,39 @@ public class TagCloudFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mTvTitle = (TextView) getActivity().findViewById(R.id.tv_title);
 
-        Mret = (Button) getActivity().findViewById(R.id.btn_lineanalyse);
+        Mline = (Button) getActivity().findViewById(R.id.btn_lineanalyse);
+        Madd = (Button) getActivity().findViewById(R.id.add);
 
-        Mret.setOnClickListener(new View.OnClickListener() {
+        Mline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(lineAnalyseFragment == null){
                     lineAnalyseFragment = new LineAnalyseFragment();
                 }
-                //按返回键上一个状态保持原样！Tag:"a"在ContainerActivity中设置;
-                Fragment fragment = getFragmentManager().findFragmentByTag("b");
-                if(fragment != null && !fragment.isAdded()){
-                    getFragmentManager().beginTransaction().hide(fragment).add(R.id.fl_container, lineAnalyseFragment).addToBackStack(null).commitAllowingStateLoss();
+                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");
+                if(tagFragment != null && !tagFragment.isAdded()){
+                    getFragmentManager().beginTransaction().hide(tagFragment).add(R.id.fl_container, lineAnalyseFragment).addToBackStack(null).commitAllowingStateLoss();
                     mTvTitle.setText("LineAnalyse");
                 }else {
                     getFragmentManager().beginTransaction().replace(R.id.fl_container, lineAnalyseFragment).addToBackStack(null).commitAllowingStateLoss();
                     mTvTitle.setText("LineAnalyse");
+                }
+            }
+        });
+
+        Madd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(dataFragment == null){
+                    dataFragment = new DataFragment();
+                }
+                Fragment fragment = getFragmentManager().findFragmentByTag("b");
+                if(fragment != null && !fragment.isAdded()){
+                    getFragmentManager().beginTransaction().hide(fragment).add(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
+                    mTvTitle.setText("Data");
+                }else {
+                    getFragmentManager().beginTransaction().replace(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
+                    mTvTitle.setText("Data");
                 }
             }
         });

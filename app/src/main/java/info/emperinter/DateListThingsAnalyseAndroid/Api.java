@@ -35,8 +35,6 @@ public class Api {
             @Override
             public void run() {
                 try {
-//                    strUrl = "https://plan.emperinter.ga/api/user/query/?format=json&user_name=emperinter&user_passwd=emperinter";
-                    Log.v("HTTP-getStream",strUrl);
                     URL url = new URL(strUrl);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET"); // 设置请求方式为 GET
@@ -44,17 +42,11 @@ public class Api {
                     int responseCode = connection.getResponseCode();
                     if (responseCode == HttpURLConnection.HTTP_OK) { // 请求成功
                         InputStream inputStream = connection.getInputStream(); // 得到响应流
-                        Log.v("inputStream-getStream:" , inputStream.toString());
                         JSONArray json = null;
                         json = streamToJson(inputStream);
-                        Log.v("getStream-json-count", String.valueOf(json.length()));
-                        Log.v("getStream-json-all", json.toString());
-//                        System.out.printf("\n####################################################");
-//                        System.out.printf("getStream-things_id:\t"+json.getJSONObject(0).get("things_id") + "\t" + String.valueOf(json.length()) );
-//                        System.out.printf("\n####################################################");
                         get_data = json.toString();
                         if(get_data == ""){
-                            get_data = "Get Data Erro!";
+                            get_data = "Get Data Error!";
                         }
                     } else {
                         get_data = "NotFound!";

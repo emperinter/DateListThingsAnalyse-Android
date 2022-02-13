@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
-import com.anychart.chart.common.dataentry.CategoryValueDataEntry;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Cartesian;
-import com.anychart.charts.TagCloud;
 import com.anychart.core.cartesian.series.Line;
 import com.anychart.data.Mapping;
 import com.anychart.data.Set;
@@ -30,7 +27,6 @@ import com.anychart.enums.Anchor;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.TooltipPositionMode;
 import com.anychart.graphics.vector.Stroke;
-import com.anychart.scales.OrdinalColor;
 import info.emperinter.DateListThingsAnalyseAndroid.API.HttpResponseCallBack;
 import info.emperinter.DateListThingsAnalyseAndroid.API.Singleton;
 import org.json.JSONArray;
@@ -42,7 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class LineAnalyseFragment extends Fragment {
-    private Button mBtnChange;
+    private Button mBtnChange,Madd,Mline;
+    private LineAnalyseFragment lineAnalyseFragment;
     private TextView mTvTitle;
     private TagCloudFragment tagCloudFragment;
     private  IOnMessageClick listener;//申明接口
@@ -52,8 +49,9 @@ public class LineAnalyseFragment extends Fragment {
     private String host = "";
     private String username;
     private String reqGet = "NO";
-    private Api api = null;
     private String url;
+    private DataFragment dataFragment;
+
 
 
 
@@ -108,7 +106,7 @@ public class LineAnalyseFragment extends Fragment {
 
 
         try {
-            Singleton.getInstance().doPostRequest(url, new HttpResponseCallBack() {
+            Singleton.getInstance().doGetRequest(url, new HttpResponseCallBack() {
                 @Override
                 public void getResponse(String response) throws JSONException {
                     reqGet = response;
@@ -173,7 +171,6 @@ public class LineAnalyseFragment extends Fragment {
                 cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
 
                 List<DataEntry> seriesData = new ArrayList<>();
-//                seriesData.add(new CustomDataEntry("1986", 3.6, 2.3, 2.8));
 
                 for (Integer i : dateMap.keySet()) {
                     seriesData.add(new CustomDataEntry(dateMap.get(i), processMap.get(i), emotionMap.get(i), energyMap.get(i)));
@@ -246,14 +243,35 @@ public class LineAnalyseFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mTvTitle = (TextView) getActivity().findViewById(R.id.tv_title);
         mBtnChange = (Button) getActivity().findViewById(R.id.btn_tagcloud);
+        Madd = (Button) getActivity().findViewById(R.id.add);
+
+        Mline = (Button) getActivity().findViewById(R.id.btn_lineanalyse);
+
+        Mline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(lineAnalyseFragment == null){
+                    lineAnalyseFragment = new LineAnalyseFragment();
+                }
+                Fragment fragment = getFragmentManager().findFragmentByTag("b");
+                if(fragment != null && !fragment.isAdded()){
+                    getFragmentManager().beginTransaction().hide(fragment).add(R.id.fl_container, lineAnalyseFragment,"l").addToBackStack(null).commitAllowingStateLoss();
+                    mTvTitle.setText("LineAnalyse");
+                }else {
+                    getFragmentManager().beginTransaction().replace(R.id.fl_container, lineAnalyseFragment,"l").addToBackStack(null).commitAllowingStateLoss();
+                    mTvTitle.setText("LineAnalyse");
+                }
+            }
+        });
+
+
         mBtnChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(tagCloudFragment == null){
                     tagCloudFragment = new TagCloudFragment();
                 }
-                //按返回键上一个状态保持原样！Tag:"a"在ContainerActivity中设置;
-                Fragment aFragment = getFragmentManager().findFragmentByTag("a");
+                Fragment aFragment = getFragmentManager().findFragmentByTag("l");
                 if(aFragment != null && !aFragment.isAdded()){
                     mTvTitle.setText("TagCloud");
                     getFragmentManager().beginTransaction().hide(aFragment).add(R.id.fl_container, tagCloudFragment,"b").addToBackStack(null).commitAllowingStateLoss();
@@ -262,6 +280,24 @@ public class LineAnalyseFragment extends Fragment {
                     getFragmentManager().beginTransaction().replace(R.id.fl_container, tagCloudFragment,"b").addToBackStack(null).commitAllowingStateLoss();
                 }
 
+            }
+        });
+
+        Madd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(dataFragment == null){
+                    dataFragment = new DataFragment();
+                }
+                //按返回键上一个状态保持原样！Tag:"a"在ContainerActivity中设置;
+                Fragment fragment = getFragmentManager().findFragmentByTag("l");
+                if(fragment != null && !fragment.isAdded()){
+                    getFragmentManager().beginTransaction().hide(fragment).add(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
+                    mTvTitle.setText("Data");
+                }else {
+                    getFragmentManager().beginTransaction().replace(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
+                    mTvTitle.setText("Data");
+                }
             }
         });
     }
