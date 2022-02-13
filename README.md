@@ -1,3 +1,5 @@
+![图片](https://user-images.githubusercontent.com/20177836/153741288-f7ffd2ff-205c-49f9-941c-5b9c5e89f147.png)
+
 # 说明
 
 > **[DateListThingsAnalyse](https://github.com/emperinter/DateListThingsAnalyse) 的Android版本**
@@ -8,4 +10,3 @@
 
 - [可视化：https://github.com/AnyChart/AnyChart-Android](https://github.com/AnyChart/AnyChart-Android)
 
-# 实在不行先在ContainerActivity中写进数据库吧！
