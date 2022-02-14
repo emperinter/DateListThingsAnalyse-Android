@@ -23,7 +23,7 @@ public class ContainerActivity extends AppCompatActivity implements LineAnalyseF
 
         mTvTitle = (TextView) findViewById(R.id.tv_title);
 
-        tagFragment = new TagCloudFragment().newInstance("我是参数!"); //传参
+        tagFragment = new TagCloudFragment().newInstance("TagCloud!"); //传参
 
         //把AFragment添加到Activity中，记得调用commit;"a"是在按返回键上一个状态保持原样！方便后续可以找到！
         getFragmentManager().beginTransaction().add(R.id.fl_container,tagFragment,"tag").commitAllowingStateLoss();
@@ -40,7 +40,6 @@ public class ContainerActivity extends AppCompatActivity implements LineAnalyseF
     public void onClick(String text) {
         mTvTitle.setText(text);
     }
-
 
 
 }

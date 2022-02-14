@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -17,12 +16,11 @@ import android.view.ViewGroup;
 import android.widget.*;
 import info.emperinter.DateListThingsAnalyseAndroid.API.HttpResponseCallBack;
 import info.emperinter.DateListThingsAnalyseAndroid.API.Singleton;
-import okhttp3.*;
 import org.json.JSONException;
 import java.io.IOException;
 
 public class DataFragment extends Fragment {
-    private Button mBtnChange,Mdata,mBtnAdd;
+    private Button Mdata,mBtnAdd,Mtag,Mline;
     private TextView mTvTitle;
     private TagCloudFragment tagCloudFragment;
     private DataFragment dataFragment;
@@ -38,6 +36,7 @@ public class DataFragment extends Fragment {
     private String getKeyWords;
 
     private String inputJson = "";
+    private LineAnalyseFragment lineAnalyseFragment;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -87,8 +86,15 @@ public class DataFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mTvTitle = (TextView) getActivity().findViewById(R.id.tv_title);
-        mBtnChange = (Button) getActivity().findViewById(R.id.btn_tagcloud);
+
+        Mtag = (Button) getActivity().findViewById(R.id.btn_tagcloud);
         Mdata = (Button) getActivity().findViewById(R.id.add);
+        Mline = (Button) getActivity().findViewById(R.id.btn_lineanalyse);
+
+        Mtag.setEnabled(true);
+        Mdata.setEnabled(false);
+        Mline.setEnabled(true);
+
         mBtnAdd = view.findViewById(R.id.btn_add);
 
         NumberPicker numberProcess = view.findViewById(R.id.processpicker);
@@ -96,6 +102,8 @@ public class DataFragment extends Fragment {
         NumberPicker numberEnergy = view.findViewById(R.id.energypicker);
         EditText getKey = view.findViewById(R.id.inputkey);
         DatePicker getDate = view.findViewById(R.id.mydate);
+
+        TextView infoText = view.findViewById(R.id.info);
 
 
         numberProcess.setMaxValue(10);
@@ -147,16 +155,16 @@ public class DataFragment extends Fragment {
                             reqGet = response;
                             Log.v("get_data_json",reqGet);
                             if(reqGet.contains("things_id")) {
-                                Toast.makeText(getActivity().getBaseContext(), "👌ok!", Toast.LENGTH_SHORT).show();
+                                infoText.setText("insert successful!");
                             }else if(reqGet.contains("exists")){
-                                Toast.makeText(getActivity().getBaseContext(), "list things with this date already exists.", Toast.LENGTH_SHORT).show();
                                 getKey.setHint("list things with this date already exists.");
-                                getKey.setTextColor(0xff3b3b3b);
+                                infoText.setText("list things with this date already exists.!");
                             }else if(reqGet.contains("This field may not be blank.") && reqGet.contains("key")){
                                 Toast.makeText(getActivity().getBaseContext(),"This field may not be blank !",Toast.LENGTH_SHORT).show();
-                                getKey.setHint("This field may not be blank.");
+                                infoText.setText("KeyWord may not be blank !");
                             }else{
                                 Toast.makeText(getActivity().getBaseContext(),"SomeThing Wrong !",Toast.LENGTH_SHORT).show();
+                                infoText.setText("Something Wrong !");
                             }
                         }
                     });
@@ -168,21 +176,21 @@ public class DataFragment extends Fragment {
         });
 
 
-
-        mBtnChange.setOnClickListener(new View.OnClickListener() {
+        //TagCloudBtn
+        Mtag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(tagCloudFragment == null){
                     tagCloudFragment = new TagCloudFragment();
                 }
-                //按返回键上一个状态保持原样！Tag:"a"在ContainerActivity中设置;
-                Fragment aFragment = getFragmentManager().findFragmentByTag("a");
-                if(aFragment != null && !aFragment.isAdded()){
+                Fragment addFragment = getFragmentManager().findFragmentByTag("add");
+                Fragment lineFragment = getFragmentManager().findFragmentByTag("line");
+                if((addFragment != null && !addFragment.isAdded()) | (lineFragment !=null && !lineFragment.isAdded())){
                     mTvTitle.setText("TagCloud");
-                    getFragmentManager().beginTransaction().hide(aFragment).add(R.id.fl_container, tagCloudFragment,"b").addToBackStack(null).commitAllowingStateLoss();
+                    getFragmentManager().beginTransaction().hide(addFragment).hide(lineFragment).add(R.id.fl_container, tagCloudFragment,"tag").addToBackStack(null).commitAllowingStateLoss();
                 }else {
                     mTvTitle.setText("TagCloud");
-                    getFragmentManager().beginTransaction().replace(R.id.fl_container, tagCloudFragment,"b").addToBackStack(null).commitAllowingStateLoss();
+                    getFragmentManager().beginTransaction().replace(R.id.fl_container, tagCloudFragment,"tag").addToBackStack(null).commitAllowingStateLoss();
                 }
 
             }
@@ -195,12 +203,13 @@ public class DataFragment extends Fragment {
                     dataFragment = new DataFragment();
                 }
                 //按返回键上一个状态保持原样！Tag:"a"在ContainerActivity中设置;
-                Fragment fragment = getFragmentManager().findFragmentByTag("d");
-                if(fragment != null && !fragment.isAdded()){
-                    getFragmentManager().beginTransaction().hide(fragment).add(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
+                Fragment lineFragment = getFragmentManager().findFragmentByTag("line");
+                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");
+                if((lineFragment != null && !lineFragment.isAdded()) | (tagFragment != null && !tagFragment.isAdded())){
+                    getFragmentManager().beginTransaction().hide(tagFragment).hide(lineFragment).add(R.id.fl_container, dataFragment,"add").addToBackStack(null).commitAllowingStateLoss();
                     mTvTitle.setText("Data");
                 }else {
-                    getFragmentManager().beginTransaction().replace(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
+                    getFragmentManager().beginTransaction().replace(R.id.fl_container, dataFragment,"add").addToBackStack(null).commitAllowingStateLoss();
                     mTvTitle.setText("Data");
                 }
             }
