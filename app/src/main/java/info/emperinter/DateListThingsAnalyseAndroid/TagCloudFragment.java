@@ -169,15 +169,15 @@ public class TagCloudFragment extends Fragment {
                 if(lineAnalyseFragment == null){
                     lineAnalyseFragment = new LineAnalyseFragment();
                 }
-                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");
-                Fragment addFragment = getFragmentManager().findFragmentByTag("add");
-                if((tagFragment != null && !tagFragment.isAdded()) | (addFragment!=null && addFragment.isAdded())){
-                    getFragmentManager().beginTransaction().hide(tagFragment).hide(addFragment).add(R.id.fl_container, lineAnalyseFragment,"line").addToBackStack(null).commitAllowingStateLoss();
-                    mTvTitle.setText("LineAnalyse");
-                }else {
+//                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");
+//                Fragment addFragment = getFragmentManager().findFragmentByTag("add");
+//                if((tagFragment != null && !tagFragment.isAdded()) | (addFragment!=null && !addFragment.isAdded())){
+//                    getFragmentManager().beginTransaction().hide(tagFragment).hide(addFragment).add(R.id.fl_container, lineAnalyseFragment,"line").addToBackStack(null).commitAllowingStateLoss();
+//                    mTvTitle.setText("LineAnalyse");
+//                }else {
                     getFragmentManager().beginTransaction().replace(R.id.fl_container, lineAnalyseFragment,"line").addToBackStack(null).commitAllowingStateLoss();
                     mTvTitle.setText("LineAnalyse");
-                }
+//                }
             }
         });
 
@@ -187,15 +187,15 @@ public class TagCloudFragment extends Fragment {
                 if(dataFragment == null){
                     dataFragment = new DataFragment();
                 }
-                Fragment lineFragment = getFragmentManager().findFragmentByTag("line");
-                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");
-                if((lineFragment != null && !lineFragment.isAdded()) | (tagFragment != null && !tagFragment.isAdded())){
-                    getFragmentManager().beginTransaction().hide(lineFragment).hide(tagFragment).add(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
-                    mTvTitle.setText("Data");
-                }else {
+//                Fragment lineFragment = getFragmentManager().findFragmentByTag("line");
+//                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");
+//                if((lineFragment != null && !lineFragment.isAdded()) | (tagFragment != null && !tagFragment.isAdded())){
+//                    getFragmentManager().beginTransaction().hide(lineFragment).hide(tagFragment).add(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
+//                    mTvTitle.setText("Data");
+//                }else {
                     getFragmentManager().beginTransaction().replace(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
                     mTvTitle.setText("Data");
-                }
+//                }
             }
         });
     }
