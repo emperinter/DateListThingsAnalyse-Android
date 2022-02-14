@@ -127,7 +127,7 @@ public class DataFragment extends Fragment {
                 getEnergy = numberEnergy.getValue();
                 getProcess = numberProcess.getValue();
                 getYear = getDate.getYear();
-                getMonth = getDate.getMonth();
+                getMonth = getDate.getMonth() + 1;
                 getDay = getDate.getDayOfMonth();
 
                 inputJson =
@@ -148,9 +148,12 @@ public class DataFragment extends Fragment {
                             Log.v("get_data_json",reqGet);
                             if(reqGet.contains("things_id")) {
                                 Toast.makeText(getActivity().getBaseContext(), "👌ok!", Toast.LENGTH_SHORT).show();
-                            }else if(reqGet.contains("list things with this date already exists.")){
+                            }else if(reqGet.contains("exists")){
+                                Toast.makeText(getActivity().getBaseContext(), "list things with this date already exists.", Toast.LENGTH_SHORT).show();
                                 getKey.setHint("list things with this date already exists.");
+                                getKey.setTextColor(0xff3b3b3b);
                             }else if(reqGet.contains("This field may not be blank.") && reqGet.contains("key")){
+                                Toast.makeText(getActivity().getBaseContext(),"This field may not be blank !",Toast.LENGTH_SHORT).show();
                                 getKey.setHint("This field may not be blank.");
                             }else{
                                 Toast.makeText(getActivity().getBaseContext(),"SomeThing Wrong !",Toast.LENGTH_SHORT).show();
