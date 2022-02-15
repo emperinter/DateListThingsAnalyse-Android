@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         if (cursor.getCount() > 0) {
             int user_id = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
             Log.v("db-getStream-userid",String.valueOf(user_id));
-            Intent changeToMain = new Intent(this, ContainerActivity.class);
+            Intent changeToMain = new Intent(this, LineChartFragment.class);
             startActivity(changeToMain);
             LoginBtn.setEnabled(false);
         }
@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                         db.execSQL("DELETE  FROM user");
                         db.insert("user", null, set_values);
 
-                        Intent changeToMain = new Intent(this, ContainerActivity.class);
+                        Intent changeToMain = new Intent(this, LineChartFragment.class);
                         startActivity(changeToMain);
                         db.close();
 
