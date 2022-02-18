@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LineAnalyseFragment extends Fragment {
+public class LineAnalyseFragment extends Fragment{
     private Button Madd,Mline,Mtag;
     private LineAnalyseFragment lineAnalyseFragment;
     private TextView mTvTitle;
