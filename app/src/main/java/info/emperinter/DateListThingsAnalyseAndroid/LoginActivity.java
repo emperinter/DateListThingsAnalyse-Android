@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                         db.execSQL("DELETE  FROM user");
                         db.insert("user", null, set_values);
 
-                        Intent changeToMain = new Intent(this, LineChartFragment.class);
+                        Intent changeToMain = new Intent(this, ContainerActivity.class);
                         startActivity(changeToMain);
                         db.close();
 

@@ -157,31 +157,24 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     };
 
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void LineChart(View view, ArrayList<String> dateList, ArrayList<Integer> processList, ArrayList<Integer> emotionList, ArrayList<Integer> energyList){
 
                 processBar = (ProgressBar) view.findViewById(R.id.progress_bar);
                 info = (TextView) view.findViewById(R.id.info);
-
                 chart = (LineChart) view.findViewById(R.id.chart1);
-
                 chart.setNoDataText("Loading...");
-                chart.setNoDataText("Loading...");
-                chart.setNoDataText("Loading...");
-                chart.setNoDataText("Loading...");
-
 
                 chart.setNoDataTextColor(Color.rgb(0,0,0));
 
                 chart.setOnChartValueSelectedListener(this);
 
                 //双击缩放禁止
-                chart.setDoubleTapToZoomEnabled(false);
+                chart.setDoubleTapToZoomEnabled(true);
 
                 //灰色背景
 //                chart.setDrawGridBackground(true);
                 //chart整个背景颜色
-        //        chart.setBackgroundColor(Color.rgb(0,0,0));
+//                chart.setBackgroundColor(Color.rgb(0,0,0));
 
 //                chart.setLeftTopRightBottom(100,100,100,100);
 
