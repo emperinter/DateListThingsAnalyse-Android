@@ -23,7 +23,7 @@ public class DataFragment extends Fragment {
     private Button Mdata,mBtnAdd,Mtag,Mline;
     private TextView mTvTitle;
     private TagCloudFragment tagCloudFragment;
-    private LineAnalyseFragment lineFragment;
+    private LineChartFragment lineFragment;
     private LineAnalyseFragment.IOnMessageClick listener;//申明接口
     private SQLiteDatabase db;
     private DbHelper myDb;
@@ -200,7 +200,7 @@ public class DataFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(lineFragment == null){
-                    lineFragment = new LineAnalyseFragment();
+                    lineFragment = new LineChartFragment();
                 }
 //                Fragment addFragment = getFragmentManager().findFragmentByTag("add");
 //                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");

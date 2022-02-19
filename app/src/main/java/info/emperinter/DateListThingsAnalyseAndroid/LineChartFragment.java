@@ -1,26 +1,23 @@
 package info.emperinter.DateListThingsAnalyseAndroid;
 
-
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.app.Fragment;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.widget.SeekBar;
+import android.view.*;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.*;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -29,345 +26,353 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import info.emperinter.DateListThingsAnalyseAndroid.API.HttpResponseCallBack;
+import info.emperinter.DateListThingsAnalyseAndroid.API.Singleton;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
+import org.json.JSONException;
 
-import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
-public class LineChartFragment extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, OnChartGestureListener, OnChartValueSelectedListener {
 
+public class LineChartFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener {
+
+
+    private Button Madd,Mline,Mtag;
+    private LineAnalyseFragment lineAnalyseFragment;
+    private TextView mTvTitle;
+    private TagCloudFragment tagCloudFragment;
+    private LineAnalyseFragment.IOnMessageClick listener;//申明接口
+    private SQLiteDatabase db;
+    private DbHelper myDb;
+    private int user_id;
+    private String host = "";
+    private String username;
+    private String reqGet = "NO";
+    private String url;
+    private DataFragment dataFragment;
 
     private LineChart chart;
-    private SeekBar seekBarX, seekBarY;
-    private TextView tvX, tvY;
 
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.barchart_fragment);
-        chart = findViewById(R.id.chart1);
 
-        setTitle("MultiLineChartActivity");
+    private ArrayList<String> dateList = new ArrayList<String>();
+    private ArrayList<Integer> processList = new ArrayList<Integer>();
+    private ArrayList<Integer> emotionList = new ArrayList<Integer>();
+    private ArrayList<Integer> energyList = new ArrayList<Integer>();
 
-        tvX = findViewById(R.id.tvXMax);
-        tvY = findViewById(R.id.tvYMax);
+    private int things_id;
+    private int process;
+    private int emotion;
+    private int energy;
+    private String get_date;
 
-        seekBarX = findViewById(R.id.seekBar1);
-        seekBarX.setOnSeekBarChangeListener(this);
-
-        seekBarY = findViewById(R.id.seekBar2);
-        seekBarY.setOnSeekBarChangeListener(this);
-
-        chart = findViewById(R.id.chart1);
-        chart.setOnChartValueSelectedListener(this);
-
-        //双击缩放禁止
-        chart.setDoubleTapToZoomEnabled(false);
-
-        //灰色背景
-//        chart.setDrawGridBackground(true);
-        //chart整个背景颜色
-//        chart.setBackgroundColor(Color.rgb(0,0,0));
-
-        chart.setLeftTopRightBottom(100,100,100,100);
-
-        chart.getDescription().setEnabled(false);
-        chart.setDrawBorders(false);
-        //左边y轴启用
-        chart.getAxisLeft().setEnabled(true);
-        chart.getAxisLeft().setDrawAxisLine(false);
-        //右边y轴禁止
-        chart.getAxisRight().setEnabled(false);
-        chart.getAxisRight().setDrawAxisLine(false);
-
-        //x 轴朝下
-        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-
-//        chart.setHorizontalScrollBarEnabled(true);
-
-//        chart.getAxisRight().setDrawGridLines(true);
-//        chart.getXAxis().setDrawAxisLine(true);
-//        chart.getXAxis().setDrawGridLines(true);
-
-        //最大可见值
-        //当点的数量大于该值时则不显示每个点具体的数值
-//        chart.setMaxVisibleValueCount(10);
-
-        //当前界面最多显示10个x轴的数据
-        chart.setVisibleXRangeMaximum(21);
-
-        //图像水平位移
-//        chart.setX(1000);
-
-        // enable touch gestures
-        chart.setTouchEnabled(true);
-
-        // enable scaling and dragging
-        chart.setDragEnabled(true);
-        chart.setScaleEnabled(true);
-
-//        chart.setKeepPositionOnRotation(true);
-
-
-        // if disabled, scaling can be done on x- and y-axis separately
-        // 手指只能分开控制x和y轴的操作
-        chart.setPinchZoom(false);
-
-
-        seekBarX.setProgress(20);
-        seekBarY.setProgress(100);
-
-        //设置chart说明
-        Legend l = chart.getLegend();
-        //靠上
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        //靠右
-//        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-        //垂直
-//        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        //图像里
-        l.setDrawInside(false);
+    //传参
+    public static LineChartFragment newInstance(String title){
+        LineChartFragment fragment = new LineChartFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("title",title);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
-//设置线的颜色
+    //声明接口，给Activity传参！在ContainerActivity实现该接口！
+    public interface IOnMessageClick{
+        void onClick(String text);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.barchart_fragment,container,false);  //设置布局文件
+
+
+        //user_id 获取
+        myDb = new DbHelper(getContext().getApplicationContext(),"user.db", null, 1);
+        db = myDb.getWritableDatabase();
+        Cursor cursor = db.query("user", null, null, null, null, null, null);
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            user_id = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));;
+            username = cursor.getString(cursor.getColumnIndexOrThrow("user_name"));
+            host = cursor.getString(cursor.getColumnIndexOrThrow("host"));
+        }
+        db.close();
+
+        //json获取
+        url = host+"/api/thing/query/?format=json&userid="+user_id;
+
+        try {
+            Singleton.getInstance().doGetRequest(url, new HttpResponseCallBack() {
+                @RequiresApi(api = Build.VERSION_CODES.Q)
+                @Override
+                public void getResponse(String response) throws JSONException {
+                    reqGet = response;
+                    if(reqGet.contains("things_id")){
+                        JSONArray userJson = new JSONArray(reqGet);
+                        for (int i = 0;i < userJson.length();i++){
+                            things_id = userJson.getJSONObject(i).getInt("things_id");
+                            get_date = userJson.getJSONObject(i).getString("date");
+                            process = userJson.getJSONObject(i).getInt("process");
+                            emotion = userJson.getJSONObject(i).getInt("emotion");
+                            energy = userJson.getJSONObject(i).getInt("energy");
+
+                            dateList.add(get_date);
+                            processList.add(process);
+                            emotionList.add(emotion);
+                            energyList.add(energy);
+                        }
+
+                        LineChart(view,dateList,processList,emotionList,energyList);
+
+                        // 弄3个HashMap依次对应相关数值
+
+                    }else if(reqGet.contains("[]")){
+                        Toast.makeText(getActivity().getBaseContext(),"username or password is wrong !",Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getActivity().getBaseContext(),"SomeThing Wrong !",Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return  view;
+    }
+
+
+    //设置线的颜色
     private final int[] colors = new int[] {
-//            ColorTemplate.VORDIPLOM_COLORS[0],
-//            ColorTemplate.VORDIPLOM_COLORS[1],
-//            ColorTemplate.VORDIPLOM_COLORS[2]
             Color.rgb(252,3,3),
             Color.rgb(36,252,3),
             Color.rgb(252,244,3),
     };
 
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-        chart.resetTracking();
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public void LineChart(View view, ArrayList<String> dateList, ArrayList<Integer> processList, ArrayList<Integer> emotionList, ArrayList<Integer> energyList){
+                chart = view.findViewById(R.id.chart1);
 
-//        chart.setMinOffset(20);
+                chart.setOnChartValueSelectedListener(this);
 
-//        chart.setMaxVisibleValueCount(10);
+                //双击缩放禁止
+                chart.setDoubleTapToZoomEnabled(false);
 
+                //灰色背景
+//                chart.setDrawGridBackground(true);
+                //chart整个背景颜色
+        //        chart.setBackgroundColor(Color.rgb(0,0,0));
 
-        progress = seekBarX.getProgress();
+//                chart.setLeftTopRightBottom(100,100,100,100);
+                chart.setNoDataText("Loading ... ");
 
-        tvX.setText(String.valueOf(seekBarX.getProgress()));
-        tvY.setText(String.valueOf(seekBarY.getProgress()));
+                chart.getDescription().setEnabled(false);
+                chart.setDrawBorders(false);
+                //左边y轴启用
+                chart.getAxisLeft().setEnabled(true);
+                chart.getAxisLeft().setDrawAxisLine(false);
+                //右边y轴禁止
+                chart.getAxisRight().setEnabled(false);
+                chart.getAxisRight().setDrawAxisLine(false);
 
-        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+                //x 轴朝下
+                chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
 
-        //这里的3代表了3条线
-        for (int z = 0; z < 3; z++) {
+                // enable touch gestures
+                chart.setTouchEnabled(true);
 
-            ArrayList<Entry> values = new ArrayList<>();
-
-            Date dNow = new Date();   //当前时间
-            Date dBefore = new Date();
-            Calendar calendar = Calendar.getInstance(); //得到日历
-            calendar.setTime(dNow);//把当前时间赋给日历
-
-
-            for (int i = 0; i < progress; i++) {
-                double val = (Math.random() * seekBarY.getProgress()) + 3;
-                values.add(new Entry(i, (float) val));
-            }
-
-            LineDataSet d = new LineDataSet(values, "DataSet " + (z + 1));
-            d.setLineWidth(1f);
-            d.setCircleRadius(3f);
-
-            //选择那种配色
-            // 0 % 3
-            // 1 % 3
-            int color = colors[z % colors.length];
-
-            d.setColor(color);
-            d.setCircleColor(color);
-            dataSets.add(d);
-        }
+                // enable scaling and dragging
+                chart.setDragEnabled(true);
+                chart.setScaleEnabled(true);
 
 
-        for (ILineDataSet iSet : dataSets) {
+                // if disabled, scaling can be done on x- and y-axis separately
+                // 手指只能分开控制x和y轴的操作
+                chart.setPinchZoom(false);
 
-            LineDataSet set = (LineDataSet) iSet;
-            set.setDrawValues(true);
-            set.setMode(set.getMode() == LineDataSet.Mode.HORIZONTAL_BEZIER
-                    ? LineDataSet.Mode.LINEAR
-                    :  LineDataSet.Mode.HORIZONTAL_BEZIER);
 
-        }
+                ArrayList<ILineDataSet> dataSets = new ArrayList<>();
 
-        LineData data = new LineData(dataSets);
+                String[] tag = new  String[3];
+                tag[0] = "process";
+                tag[1] = "emotion";
+                tag[2] = "energy";
 
-        chart.setVisibleXRangeMaximum(18);
+                //这里的3代表了3条线
+                for (int z = 0; z < 3; z++) {
 
-        chart.setData(data);
-        chart.invalidate();
-    }
+                    ArrayList<Entry> values = new ArrayList<>();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.line, menu);
-        menu.removeItem(R.id.actionToggleIcons);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+                        for (int i = 0; i < 255; i++) {
+                            double val = (Math.random() * 6) + 3;
+                            values.add(new Entry(i, (float) val));
+                        }
 
-        switch (item.getItemId()) {
-            case R.id.viewGithub: {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse("https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/MultiLineChartActivity.java"));
-                startActivity(i);
-                break;
-            }
-            case R.id.actionToggleValues: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
+                        LineDataSet d = new LineDataSet(values, tag[z]);
+                        d.setLineWidth(2f);
+                        d.setCircleRadius(5f);
+//                        d.setValueTextSize(5f);
 
-                for (ILineDataSet iSet : sets) {
+//                        if (d.isDrawFilledEnabled())
+//                            d.setDrawFilled(false);
+//                        else
+//                            d.setDrawFilled(true);
+//                            d.setFillColor(Color.rgb(1,z*60,3));
+
+                        //选择那种配色
+                        // 0 % 3
+                        // 1 % 3
+                        int color = colors[z % colors.length];
+                        d.setColor(color);
+                        d.setCircleColor(color);
+
+                        if (d.isDrawFilledEnabled())
+                            d.setDrawFilled(false);
+                        else
+                            d.setDrawFilled(true);
+                        d.setFillColor(color);
+
+                        dataSets.add(d);
+                }
+
+
+                for (ILineDataSet iSet : dataSets) {
+
                     LineDataSet set = (LineDataSet) iSet;
-//                    set.setDrawValues(!set.isDrawValuesEnabled());
                     set.setDrawValues(true);
-
-                }
-
-                chart.invalidate();
-                break;
-            }
-            /*
-            case R.id.actionToggleIcons: { break; }
-             */
-            case R.id.actionTogglePinch: {
-                if (chart.isPinchZoomEnabled())
-                    chart.setPinchZoom(false);
-                else
-                    chart.setPinchZoom(true);
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleAutoScaleMinMax: {
-                chart.setAutoScaleMinMaxEnabled(!chart.isAutoScaleMinMaxEnabled());
-                chart.notifyDataSetChanged();
-                break;
-            }
-            case R.id.actionToggleHighlight: {
-                if(chart.getData() != null) {
-                    chart.getData().setHighlightEnabled(!chart.getData().isHighlightEnabled());
-                    chart.invalidate();
-                }
-                break;
-            }
-            case R.id.actionToggleFilled: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-                    if (set.isDrawFilledEnabled())
-                        set.setDrawFilled(false);
-                    else
-                        set.setDrawFilled(true);
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleCircles: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-                    if (set.isDrawCirclesEnabled())
-                        set.setDrawCircles(false);
-                    else
-                        set.setDrawCircles(true);
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleCubic: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-                    set.setMode(set.getMode() == LineDataSet.Mode.CUBIC_BEZIER
-                            ? LineDataSet.Mode.LINEAR
-                            :  LineDataSet.Mode.CUBIC_BEZIER);
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleStepped: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-                    set.setMode(set.getMode() == LineDataSet.Mode.STEPPED
-                            ? LineDataSet.Mode.LINEAR
-                            :  LineDataSet.Mode.STEPPED);
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleHorizontalCubic: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
+                    set.setValueTextSize(15f);
+                    set.setDrawVerticalHighlightIndicator(true);
                     set.setMode(set.getMode() == LineDataSet.Mode.HORIZONTAL_BEZIER
                             ? LineDataSet.Mode.LINEAR
                             :  LineDataSet.Mode.HORIZONTAL_BEZIER);
                 }
+
+                LineData data = new LineData(dataSets);
+
+                chart.setData(data);
+                //当前界面最多显示10个x轴的数据
+                chart.setVisibleXRangeMaximum(7);
                 chart.invalidate();
-                break;
-            }
-            case R.id.actionSave: {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-//                    saveToGallery();
-                } else {
-//                    requestStoragePermission(chart);
-                }
-                break;
-            }
-            case R.id.animateX: {
-                chart.animateX(2000);
-                break;
-            }
-            case R.id.animateY: {
-                chart.animateY(2000);
-                break;
-            }
-            case R.id.animateXY: {
-                chart.animateXY(2000, 2000);
-                break;
-            }
-        }
-        return true;
+
+                //设置chart说明
+                Legend l = chart.getLegend();
+                //靠上
+                l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+                //靠右
+        //        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+                l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+                //垂直
+        //        l.setOrientation(Legend.LegendOrientation.VERTICAL);
+                l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+                //图像里
+                l.setDrawInside(false);
     }
 
-//    @Override
-//    protected void saveToGallery() {
-//        saveToGallery(chart, "MultiLineChartActivity");
-//    }
+    private class CustomDataEntry extends ValueDataEntry {
+
+        CustomDataEntry(String x, Number value, Number value2, Number value3) {
+            super(x, value);
+            setValue("value2", value2);
+            setValue("value3", value3);
+        }
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mTvTitle = (TextView) getActivity().findViewById(R.id.tv_title);
+        Madd = (Button) getActivity().findViewById(R.id.add);
+
+        Mline = (Button) getActivity().findViewById(R.id.btn_lineanalyse);
+        Mtag = (Button) getActivity().findViewById(R.id.btn_tagcloud);
+        Mtag.setEnabled(true);
+        Mline.setEnabled(false);
+        Madd.setEnabled(true);
+
+        Mline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(lineAnalyseFragment == null){
+                    lineAnalyseFragment = new LineAnalyseFragment();
+                }
+                getFragmentManager().beginTransaction().replace(R.id.fl_container, lineAnalyseFragment,"line").addToBackStack(null).commitAllowingStateLoss();
+
+            }
+        });
+
+
+        Mtag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(tagCloudFragment == null){
+                    tagCloudFragment = new TagCloudFragment();
+                }
+
+                mTvTitle.setText("TagCloud");
+                getFragmentManager().beginTransaction().replace(R.id.fl_container, tagCloudFragment,"tag").addToBackStack(null).commitAllowingStateLoss();
+
+            }
+        });
+
+        Madd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(dataFragment == null){
+                    dataFragment = new DataFragment();
+                }
+                getFragmentManager().beginTransaction().replace(R.id.fl_container, dataFragment,"add").addToBackStack(null).commitAllowingStateLoss();
+                mTvTitle.setText("Data");
+            }
+        });
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            listener = (LineAnalyseFragment.IOnMessageClick) context;   //给Activity传参
+        }catch (ClassCastException ex){
+            throw  new ClassCastException("Activity 必须实现IOnMessageClick 接口!");
+        }
+
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //取消异步
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_BACK){
+                    Toast.makeText(getActivity(), "exit!", Toast.LENGTH_SHORT).show();
+                    getActivity().moveTaskToBack(true);
+                    getActivity().finish();
+                    System.exit(0);
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+
 
     @Override
     public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
@@ -421,11 +426,7 @@ public class LineChartFragment extends AppCompatActivity implements SeekBar.OnSe
     }
 
     @Override
-    public void onNothingSelected() {}
+    public void onNothingSelected() {
 
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {}
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {}
+    }
 }

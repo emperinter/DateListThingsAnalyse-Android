@@ -38,6 +38,7 @@ public class TagCloudFragment extends Fragment {
     private Button Mline,Madd,Mtag;
     private LineAnalyseFragment lineAnalyseFragment;
     private DataFragment dataFragment;
+    private LineChartFragment lineChartFragment;
     private SQLiteDatabase db;
     private DbHelper myDb;
     private String username = "";
@@ -165,8 +166,11 @@ public class TagCloudFragment extends Fragment {
         Mline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(lineAnalyseFragment == null){
-                    lineAnalyseFragment = new LineAnalyseFragment();
+//                if(lineAnalyseFragment == null){
+//                    lineAnalyseFragment = new LineAnalyseFragment();
+//                }
+                if (lineChartFragment == null){
+                    lineChartFragment = new LineChartFragment();
                 }
 //                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");
 //                Fragment addFragment = getFragmentManager().findFragmentByTag("add");
@@ -174,7 +178,7 @@ public class TagCloudFragment extends Fragment {
 //                    getFragmentManager().beginTransaction().hide(tagFragment).hide(addFragment).add(R.id.fl_container, lineAnalyseFragment,"line").addToBackStack(null).commitAllowingStateLoss();
 //                    mTvTitle.setText("LineAnalyse");
 //                }else {
-                    getFragmentManager().beginTransaction().replace(R.id.fl_container, lineAnalyseFragment,"line").addToBackStack(null).commitAllowingStateLoss();
+                    getFragmentManager().beginTransaction().replace(R.id.fl_container, lineChartFragment,"line").addToBackStack(null).commitAllowingStateLoss();
                     mTvTitle.setText("LineAnalyse");
 //                }
             }

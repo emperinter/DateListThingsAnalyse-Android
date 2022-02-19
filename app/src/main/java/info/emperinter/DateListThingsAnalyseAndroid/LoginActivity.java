@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         if (cursor.getCount() > 0) {
             int user_id = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
             Log.v("db-getStream-userid",String.valueOf(user_id));
-            Intent changeToMain = new Intent(this, LineChartFragment.class);
+            Intent changeToMain = new Intent(this, ContainerActivity.class);
             startActivity(changeToMain);
             LoginBtn.setEnabled(false);
         }
