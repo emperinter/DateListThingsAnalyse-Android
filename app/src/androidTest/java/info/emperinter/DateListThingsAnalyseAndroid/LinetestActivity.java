@@ -1,22 +1,15 @@
 package info.emperinter.DateListThingsAnalyseAndroid;
 
 
-import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.*;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class LinetestActivity extends AppCompatActivity {
 
@@ -26,7 +19,7 @@ public class LinetestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.barchart_fragment);
+        setContentView(R.layout.linechart_fragment);
         lc = findViewById(R.id.chart1);
 
 

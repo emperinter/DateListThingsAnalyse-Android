@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import java.util.Objects;
 
-public class ContainerActivity extends AppCompatActivity implements LineAnalyseFragment.IOnMessageClick{
+public class ContainerActivity extends AppCompatActivity implements LineChartFragment.IOnMessageClick{
 
     private TagCloudFragment tagFragment;
 

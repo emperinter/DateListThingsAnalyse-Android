@@ -1,4 +1,4 @@
-package info.emperinter.DateListThingsAnalyseAndroid;
+package info.emperinter.DateListThingsAnalyseAndroid.Data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

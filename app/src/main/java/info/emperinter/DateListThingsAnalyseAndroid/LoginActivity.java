@@ -10,6 +10,8 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.AuthApi;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.DbHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import java.util.Objects;
@@ -19,7 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView user,passwd,host;
     private String reqGet = "";
     private int userid;
-    public Api api = new Api();
+    public AuthApi api = new AuthApi();
     private SQLiteDatabase db;
     private DbHelper dbHelper;
     @Override

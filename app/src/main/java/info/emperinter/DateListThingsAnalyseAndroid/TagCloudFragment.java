@@ -22,8 +22,9 @@ import com.anychart.chart.common.dataentry.CategoryValueDataEntry;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.charts.TagCloud;
 import com.anychart.scales.OrdinalColor;
-import info.emperinter.DateListThingsAnalyseAndroid.API.HttpResponseCallBack;
-import info.emperinter.DateListThingsAnalyseAndroid.API.Singleton;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.DbHelper;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.HttpResponseCallBack;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.Singleton;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -36,7 +37,6 @@ public class TagCloudFragment extends Fragment {
 
     private TextView mTvTitle;
     private Button Mline,Madd,Mtag;
-    private LineAnalyseFragment lineAnalyseFragment;
     private DataFragment dataFragment;
     private LineChartFragment lineChartFragment;
     private SQLiteDatabase db;

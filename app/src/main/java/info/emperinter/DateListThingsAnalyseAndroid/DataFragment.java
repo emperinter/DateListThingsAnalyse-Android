@@ -14,8 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import info.emperinter.DateListThingsAnalyseAndroid.API.HttpResponseCallBack;
-import info.emperinter.DateListThingsAnalyseAndroid.API.Singleton;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.DbHelper;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.HttpResponseCallBack;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.Singleton;
 import org.json.JSONException;
 import java.io.IOException;
 
@@ -24,7 +25,7 @@ public class DataFragment extends Fragment {
     private TextView mTvTitle;
     private TagCloudFragment tagCloudFragment;
     private LineChartFragment lineFragment;
-    private LineAnalyseFragment.IOnMessageClick listener;//申明接口
+    private LineChartFragment.IOnMessageClick listener;//申明接口
     private SQLiteDatabase db;
     private DbHelper myDb;
     private int user_id;
@@ -36,7 +37,6 @@ public class DataFragment extends Fragment {
     private String getKeyWords;
 
     private String inputJson = "";
-    private LineAnalyseFragment lineAnalyseFragment;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)

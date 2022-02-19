@@ -21,13 +21,15 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import info.emperinter.DateListThingsAnalyseAndroid.API.HttpResponseCallBack;
-import info.emperinter.DateListThingsAnalyseAndroid.API.Singleton;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.DbHelper;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.HttpResponseCallBack;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.Singleton;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,10 +42,10 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
 
 
     private Button Madd,Mline,Mtag;
-    private LineAnalyseFragment lineAnalyseFragment;
+    private LineChartFragment lineAnalyseFragment;
     private TextView mTvTitle;
     private TagCloudFragment tagCloudFragment;
-    private LineAnalyseFragment.IOnMessageClick listener;//申明接口
+    private LineChartFragment.IOnMessageClick listener;//申明接口
     private SQLiteDatabase db;
     private DbHelper myDb;
     private int user_id;
@@ -86,7 +88,7 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.barchart_fragment,container,false);  //设置布局文件
+        View view = inflater.inflate(R.layout.linechart_fragment,container,false);  //设置布局文件
 
 
         //user_id 获取
@@ -147,14 +149,18 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     //设置线的颜色
     private final int[] colors = new int[] {
             Color.rgb(252,3,3),
-            Color.rgb(36,252,3),
             Color.rgb(252,244,3),
+            Color.rgb(36,252,3),
     };
 
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void LineChart(View view, ArrayList<String> dateList, ArrayList<Integer> processList, ArrayList<Integer> emotionList, ArrayList<Integer> energyList){
                 chart = view.findViewById(R.id.chart1);
+
+                chart.setNoDataText("Loading...");
+
+                chart.setNoDataTextColor(Color.rgb(0,0,0));
 
                 chart.setOnChartValueSelectedListener(this);
 
@@ -167,7 +173,6 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
         //        chart.setBackgroundColor(Color.rgb(0,0,0));
 
 //                chart.setLeftTopRightBottom(100,100,100,100);
-                chart.setNoDataText("Loading ... ");
 
                 chart.getDescription().setEnabled(false);
                 chart.setDrawBorders(false);
@@ -201,42 +206,62 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
                 tag[1] = "emotion";
                 tag[2] = "energy";
 
+                int thingsCount = dateList.size();
+
+                ArrayList<String> xLable = new ArrayList<>();
+                for (int m = 0;m < thingsCount;m++ ){
+                    xLable.add(dateList.get(m));
+                }
+                XAxis xAxis = chart.getXAxis();
+
+                xAxis.setValueFormatter(new IndexAxisValueFormatter(xLable));
+
+
                 //这里的3代表了3条线
                 for (int z = 0; z < 3; z++) {
 
                     ArrayList<Entry> values = new ArrayList<>();
 
-
-                        for (int i = 0; i < 255; i++) {
-                            double val = (Math.random() * 6) + 3;
-                            values.add(new Entry(i, (float) val));
+                    if(z == 0){
+                        for (int i = 0; i < thingsCount; i++) {
+//                            double val = (Math.random() * 6) + 3;
+                            values.add(new Entry(i, processList.get(i)));
                         }
+                    }else if (z == 1){
+                        for (int i = 0; i < thingsCount; i++) {
+//                            double val = (Math.random() * 6) + 3;
+                            values.add(new Entry(i, emotionList.get(i)));
+                        }
+                    }else if (z == 2){
+                        for (int i = 0; i < thingsCount; i++) {
+//                            double val = (Math.random() * 6) + 3;
+                            values.add(new Entry(i, energyList.get(i)));
+                        }
+                    }
 
-                        LineDataSet d = new LineDataSet(values, tag[z]);
-                        d.setLineWidth(2f);
-                        d.setCircleRadius(5f);
-//                        d.setValueTextSize(5f);
 
-//                        if (d.isDrawFilledEnabled())
-//                            d.setDrawFilled(false);
-//                        else
-//                            d.setDrawFilled(true);
-//                            d.setFillColor(Color.rgb(1,z*60,3));
+                    LineDataSet d = new LineDataSet(values, tag[z]);
+                    d.setLineWidth(2f);
+                    d.setCircleRadius(5f);
+                    d.setHighlightLineWidth(3);
+//                    d.setHighLightColor(Color.rgb(0,0,0));
 
-                        //选择那种配色
-                        // 0 % 3
-                        // 1 % 3
-                        int color = colors[z % colors.length];
-                        d.setColor(color);
-                        d.setCircleColor(color);
 
-                        if (d.isDrawFilledEnabled())
-                            d.setDrawFilled(false);
-                        else
-                            d.setDrawFilled(true);
-                        d.setFillColor(color);
+                    //选择那种配色
+                    // 0 % 3
+                    // 1 % 3
+                    int color = colors[z % colors.length];
+                    d.setColor(color);
+                    d.setCircleColor(color);
+                    d.setHighLightColor(color);
 
-                        dataSets.add(d);
+                    if (d.isDrawFilledEnabled())
+                        d.setDrawFilled(false);
+                    else
+                        d.setDrawFilled(true);
+                    d.setFillColor(color);
+
+                    dataSets.add(d);
                 }
 
 
@@ -256,6 +281,8 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
                 chart.setData(data);
                 //当前界面最多显示10个x轴的数据
                 chart.setVisibleXRangeMaximum(7);
+                //移到某个位置
+                chart.moveViewToX(thingsCount);
                 chart.invalidate();
 
                 //设置chart说明
@@ -272,14 +299,6 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
                 l.setDrawInside(false);
     }
 
-    private class CustomDataEntry extends ValueDataEntry {
-
-        CustomDataEntry(String x, Number value, Number value2, Number value3) {
-            super(x, value);
-            setValue("value2", value2);
-            setValue("value3", value3);
-        }
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -297,7 +316,7 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
             @Override
             public void onClick(View v) {
                 if(lineAnalyseFragment == null){
-                    lineAnalyseFragment = new LineAnalyseFragment();
+                    lineAnalyseFragment = new LineChartFragment();
                 }
                 getFragmentManager().beginTransaction().replace(R.id.fl_container, lineAnalyseFragment,"line").addToBackStack(null).commitAllowingStateLoss();
 
@@ -334,7 +353,7 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     public void onAttach(Context context) {
         super.onAttach(context);
         try{
-            listener = (LineAnalyseFragment.IOnMessageClick) context;   //给Activity传参
+            listener = (LineChartFragment.IOnMessageClick) context;   //给Activity传参
         }catch (ClassCastException ex){
             throw  new ClassCastException("Activity 必须实现IOnMessageClick 接口!");
         }

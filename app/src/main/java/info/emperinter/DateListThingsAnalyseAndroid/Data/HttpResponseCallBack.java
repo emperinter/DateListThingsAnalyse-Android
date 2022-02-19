@@ -1,4 +1,4 @@
-package info.emperinter.DateListThingsAnalyseAndroid.API;
+package info.emperinter.DateListThingsAnalyseAndroid.Data;
 
 import org.json.JSONException;
 

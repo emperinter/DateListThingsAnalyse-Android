@@ -1,4 +1,4 @@
-package info.emperinter.DateListThingsAnalyseAndroid;
+package info.emperinter.DateListThingsAnalyseAndroid.Data;
 
 import android.os.Build;
 import androidx.annotation.RequiresApi;
@@ -12,7 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-public class Api {
+public class AuthApi {
     public String get_data = "";
 
     //    HTTP响应流转换成JSON
