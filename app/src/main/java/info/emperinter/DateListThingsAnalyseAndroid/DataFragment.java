@@ -5,14 +5,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.*;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.DbHelper;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.HttpResponseCallBack;
@@ -44,7 +41,9 @@ public class DataFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.data_fragment,container,false);  //设置布局文件
+//       软键盘弹出时，整个界面不会变动，输入框也不会顶起，这种设置
 
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams. SOFT_INPUT_ADJUST_NOTHING);
 
         //user_id 获取
         myDb = new DbHelper(getContext().getApplicationContext(),"user.db", null, 1);
