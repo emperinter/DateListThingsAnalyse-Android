@@ -1,15 +1,14 @@
 package info.emperinter.DateListThingsAnalyseAndroid;
 
 
-import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +22,9 @@ import com.anychart.chart.common.dataentry.CategoryValueDataEntry;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.charts.TagCloud;
 import com.anychart.scales.OrdinalColor;
-import info.emperinter.DateListThingsAnalyseAndroid.API.HttpResponseCallBack;
-import info.emperinter.DateListThingsAnalyseAndroid.API.Singleton;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.DbHelper;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.HttpResponseCallBack;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.Singleton;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -36,14 +36,14 @@ import java.util.List;
 public class TagCloudFragment extends Fragment {
 
     private TextView mTvTitle;
-    private Button Mline,Madd;
-    private LineAnalyseFragment lineAnalyseFragment;
+    private Button Mline,Madd,Mtag;
     private DataFragment dataFragment;
+    private LineChartFragment lineChartFragment;
     private SQLiteDatabase db;
     private DbHelper myDb;
     private String username = "";
     private String host = "";
-    private String reqGet = "NO";
+    private String reqGet = "";
     private String url;
 
     // keyword的HashMap
@@ -62,7 +62,6 @@ public class TagCloudFragment extends Fragment {
     }
 
 
-    @SuppressLint("LongLogTag")
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
     @Override
@@ -101,6 +100,7 @@ public class TagCloudFragment extends Fragment {
                             }
                         }
 
+                        //数据展示
                         TagChart(view,KeyMap);
 
                     }else if(reqGet.contains("[]")){
@@ -116,8 +116,6 @@ public class TagCloudFragment extends Fragment {
             e.printStackTrace();
         }
 
-
-
         return  view;
     }
 
@@ -131,9 +129,12 @@ public class TagCloudFragment extends Fragment {
                 TagCloud tagCloud = AnyChart.tagCloud();
                 tagCloud.title(username + "TagCloud");
                 OrdinalColor ordinalColor = OrdinalColor.instantiate();
+
                 ordinalColor.colors(new String[] {
-                        "#26959f", "#f18126", "#3b8ad8", "#60727b", "#e24b26","#FF03DAC5"
+                        "#26959f", "#f18126", "#3b8ad8", "#60727b", "#e24b26", "#FF03DAC5",
+                        "#eb6b34", "#ae34eb", "#34eb68", "#4c34eb", "#eb347d", "#34eba8"
                 });
+
                 tagCloud.colorScale(ordinalColor);
                 tagCloud.angles(new Double[] {-90d, 0d, 90d});
 
@@ -157,21 +158,29 @@ public class TagCloudFragment extends Fragment {
 
         Mline = (Button) getActivity().findViewById(R.id.btn_lineanalyse);
         Madd = (Button) getActivity().findViewById(R.id.add);
+        Mtag = (Button) getActivity().findViewById(R.id.btn_tagcloud);
+        Mtag.setEnabled(false);
+        Madd.setEnabled(true);
+        Mline.setEnabled(true);
 
         Mline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(lineAnalyseFragment == null){
-                    lineAnalyseFragment = new LineAnalyseFragment();
+//                if(lineAnalyseFragment == null){
+//                    lineAnalyseFragment = new LineAnalyseFragment();
+//                }
+                if (lineChartFragment == null){
+                    lineChartFragment = new LineChartFragment();
                 }
-                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");
-                if(tagFragment != null && !tagFragment.isAdded()){
-                    getFragmentManager().beginTransaction().hide(tagFragment).add(R.id.fl_container, lineAnalyseFragment).addToBackStack(null).commitAllowingStateLoss();
+//                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");
+//                Fragment addFragment = getFragmentManager().findFragmentByTag("add");
+//                if((tagFragment != null && !tagFragment.isAdded()) | (addFragment!=null && !addFragment.isAdded())){
+//                    getFragmentManager().beginTransaction().hide(tagFragment).hide(addFragment).add(R.id.fl_container, lineAnalyseFragment,"line").addToBackStack(null).commitAllowingStateLoss();
+//                    mTvTitle.setText("LineAnalyse");
+//                }else {
+                    getFragmentManager().beginTransaction().replace(R.id.fl_container, lineChartFragment,"line").addToBackStack(null).commitAllowingStateLoss();
                     mTvTitle.setText("LineAnalyse");
-                }else {
-                    getFragmentManager().beginTransaction().replace(R.id.fl_container, lineAnalyseFragment).addToBackStack(null).commitAllowingStateLoss();
-                    mTvTitle.setText("LineAnalyse");
-                }
+//                }
             }
         });
 
@@ -181,14 +190,15 @@ public class TagCloudFragment extends Fragment {
                 if(dataFragment == null){
                     dataFragment = new DataFragment();
                 }
-                Fragment fragment = getFragmentManager().findFragmentByTag("b");
-                if(fragment != null && !fragment.isAdded()){
-                    getFragmentManager().beginTransaction().hide(fragment).add(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
-                    mTvTitle.setText("Data");
-                }else {
+//                Fragment lineFragment = getFragmentManager().findFragmentByTag("line");
+//                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");
+//                if((lineFragment != null && !lineFragment.isAdded()) | (tagFragment != null && !tagFragment.isAdded())){
+//                    getFragmentManager().beginTransaction().hide(lineFragment).hide(tagFragment).add(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
+//                    mTvTitle.setText("Data");
+//                }else {
                     getFragmentManager().beginTransaction().replace(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
                     mTvTitle.setText("Data");
-                }
+//                }
             }
         });
     }

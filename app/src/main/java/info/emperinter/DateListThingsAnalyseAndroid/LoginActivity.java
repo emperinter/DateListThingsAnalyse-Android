@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.AuthApi;
+import info.emperinter.DateListThingsAnalyseAndroid.Data.DbHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import java.util.Objects;
@@ -19,7 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView user,passwd,host;
     private String reqGet = "";
     private int userid;
-    public Api api = new Api();
+    public AuthApi api = new AuthApi();
     private SQLiteDatabase db;
     private DbHelper dbHelper;
     @Override
@@ -64,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                         db.execSQL("DELETE  FROM user");
                         db.insert("user", null, set_values);
 
-                        Intent changeToMain = new Intent(this, ContainerActivity.class);
+                        Intent changeToMain = new Intent(this, LineChartFragment.class);
                         startActivity(changeToMain);
                         db.close();
 
