@@ -10,11 +10,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -54,6 +54,8 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     private String reqGet = "NO";
     private String url;
     private DataFragment dataFragment;
+    private ProgressBar processBar;
+    private TextView info;
 
     private LineChart chart;
 
@@ -69,6 +71,7 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     private int emotion;
     private int energy;
     private String get_date;
+
 
     //传参
     public static LineChartFragment newInstance(String title){
@@ -156,9 +159,17 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void LineChart(View view, ArrayList<String> dateList, ArrayList<Integer> processList, ArrayList<Integer> emotionList, ArrayList<Integer> energyList){
-                chart = view.findViewById(R.id.chart1);
+
+                processBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+                info = (TextView) view.findViewById(R.id.info);
+
+                chart = (LineChart) view.findViewById(R.id.chart1);
 
                 chart.setNoDataText("Loading...");
+                chart.setNoDataText("Loading...");
+                chart.setNoDataText("Loading...");
+                chart.setNoDataText("Loading...");
+
 
                 chart.setNoDataTextColor(Color.rgb(0,0,0));
 
@@ -277,6 +288,11 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
                 }
 
                 LineData data = new LineData(dataSets);
+
+                //消失
+                processBar.setVisibility(View.INVISIBLE);
+//                info.setText("Data Dealing Successful !");
+                info.setVisibility(View.INVISIBLE);
 
                 chart.setData(data);
                 //当前界面最多显示10个x轴的数据
