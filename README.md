@@ -3,7 +3,7 @@
 
 |TagCloud|DataDealing|LineChart|
 |:---:|:---:|:---:|
-|![图片](https://user-images.githubusercontent.com/20177836/153741288-f7ffd2ff-205c-49f9-941c-5b9c5e89f147.png)|![图片](https://user-images.githubusercontent.com/20177836/154826966-c791828a-10b4-4dbd-a0e0-ef1e2c290584.png)|![图片](https://user-images.githubusercontent.com/20177836/154826915-bba94eaa-f71e-4dc6-962c-35a99ad43462.png)|
+|![图片](https://user-images.githubusercontent.com/20177836/154837383-52b54497-9ed6-4849-82af-34edbf076904.png)|![图片](https://user-images.githubusercontent.com/20177836/154837370-1f96536b-d9f3-4c14-8302-f4f1fcf31727.png)|![图片](https://user-images.githubusercontent.com/20177836/154837394-769ab4c0-0950-4275-979f-9ab51035b89f.png)|
 
 
 
@@ -35,8 +35,8 @@
 
 - [X] 添加界面布局优化
 - [x] 按tag-> line -> data依次点击会出现line和data视图重叠的现象
-- [ ] 数据删除(看情况)
-- [ ] 数据更新(看情况)
+- [ ] 数据删除(看情况,目前服务器端支持)
+- [ ] 数据更新(看情况,目前服务器端支持)
 - [ ] 用户退出
 - [ ] 数据本地存储(难在和服务器的交互上，本地到简单，一个SQLite就能解决)
 
