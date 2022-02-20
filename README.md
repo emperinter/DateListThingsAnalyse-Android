@@ -1,4 +1,12 @@
-![图片](https://user-images.githubusercontent.com/20177836/153741288-f7ffd2ff-205c-49f9-941c-5b9c5e89f147.png)
+
+
+
+|TagCloud|DataDealing|LineChart|
+|:---:|:---:|:---:|
+|![图片](https://user-images.githubusercontent.com/20177836/153741288-f7ffd2ff-205c-49f9-941c-5b9c5e89f147.png)|![图片](https://user-images.githubusercontent.com/20177836/154826966-c791828a-10b4-4dbd-a0e0-ef1e2c290584.png)|![图片](https://user-images.githubusercontent.com/20177836/154826915-bba94eaa-f71e-4dc6-962c-35a99ad43462.png)|
+
+
+
 
 # 说明
 
