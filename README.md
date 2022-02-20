@@ -4,6 +4,16 @@
 
 > **[DateListThingsAnalyse](https://github.com/emperinter/DateListThingsAnalyse) 的Android版本**
 
+- 这个主要还是依靠Web版本，账号的注册还是得去上个这个项目得对应网站才行。
+
+- 测试账号
+
+|属性|信息|
+|:---:|:---:|
+|用户名|`test`|
+|密码|`test`|
+|主机|`https://plan.emperinter.ga`|
+
 
 # 目前项目进度
 
@@ -16,17 +26,12 @@
 
 ## 需要优化的
 
-- [ ] 添加界面布局优化
+- [X] 添加界面布局优化
 - [ ] 数据删除(看情况)
 - [ ] 数据更新(看情况)
 - [ ] 用户退出
 - [ ] 数据本地存储(难在和服务器的交互上，本地到简单，一个SQLite就能解决)
-<<<<<<< HEAD
-- [ ] 按tag-> line -> data依次点击会出现line和data视图重叠的现象
-=======
-- [X] 第一次登录按data -> line 会崩溃退出
 
->>>>>>> test
 
 # Special Thanks
 
