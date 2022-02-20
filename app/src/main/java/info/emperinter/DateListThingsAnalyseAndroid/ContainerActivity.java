@@ -9,8 +9,7 @@ import java.util.Objects;
 
 public class ContainerActivity extends AppCompatActivity implements LineChartFragment.IOnMessageClick{
 
-    private TagCloudFragment tagFragment;
-
+    private DataFragment dataFragment = new DataFragment();
     private TextView mTvTitle;
 
     @Override
@@ -21,9 +20,8 @@ public class ContainerActivity extends AppCompatActivity implements LineChartFra
 
         mTvTitle = (TextView) findViewById(R.id.tv_title);
 
-        tagFragment = new TagCloudFragment().newInstance("TagCloud!"); //传参
 
-        getFragmentManager().beginTransaction().add(R.id.fl_container,tagFragment,"tag").commitAllowingStateLoss();
+        getFragmentManager().beginTransaction().add(R.id.fl_container,dataFragment,"add").commitAllowingStateLoss();
     }
 
     //不推荐

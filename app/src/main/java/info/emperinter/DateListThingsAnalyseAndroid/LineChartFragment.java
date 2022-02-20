@@ -43,7 +43,6 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
 
     private Button Madd,Mline,Mtag;
     private LineChartFragment lineAnalyseFragment;
-    private TextView mTvTitle;
     private TagCloudFragment tagCloudFragment;
     private LineChartFragment.IOnMessageClick listener;//申明接口
     private SQLiteDatabase db;
@@ -152,7 +151,8 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     //设置线的颜色
     private final int[] colors = new int[] {
             Color.rgb(252,3,3),
-            Color.rgb(252,244,3),
+//            Color.rgb(252,244,3),
+            Color.rgb(187,134,252),
             Color.rgb(36,252,3),
     };
 
@@ -162,7 +162,9 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
                 processBar = (ProgressBar) view.findViewById(R.id.progress_bar);
                 info = (TextView) view.findViewById(R.id.info);
                 chart = (LineChart) view.findViewById(R.id.chart1);
+                chart.getDescription().setEnabled(false);
                 chart.setNoDataText("Loading...");
+                chart.invalidate();
 
                 chart.setNoDataTextColor(Color.rgb(0,0,0));
 
@@ -195,7 +197,8 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
 
                 // enable scaling and dragging
                 chart.setDragEnabled(true);
-                chart.setScaleEnabled(true);
+                //禁止缩放
+                chart.setScaleEnabled(false);
 
 
                 // if disabled, scaling can be done on x- and y-axis separately
@@ -312,7 +315,6 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mTvTitle = (TextView) getActivity().findViewById(R.id.tv_title);
         Madd = (Button) getActivity().findViewById(R.id.add);
 
         Mline = (Button) getActivity().findViewById(R.id.btn_lineanalyse);
@@ -340,7 +342,6 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
                     tagCloudFragment = new TagCloudFragment();
                 }
 
-                mTvTitle.setText("TagCloud");
                 getFragmentManager().beginTransaction().replace(R.id.fl_container, tagCloudFragment,"tag").addToBackStack(null).commitAllowingStateLoss();
 
             }
@@ -353,7 +354,6 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
                     dataFragment = new DataFragment();
                 }
                 getFragmentManager().beginTransaction().replace(R.id.fl_container, dataFragment,"add").addToBackStack(null).commitAllowingStateLoss();
-                mTvTitle.setText("Data");
             }
         });
     }

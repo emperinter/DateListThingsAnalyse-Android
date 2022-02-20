@@ -19,7 +19,6 @@ import java.io.IOException;
 
 public class DataFragment extends Fragment {
     private Button Mdata,mBtnAdd,Mtag,Mline;
-    private TextView mTvTitle;
     private TagCloudFragment tagCloudFragment;
     private LineChartFragment lineFragment;
     private LineChartFragment.IOnMessageClick listener;//申明接口
@@ -84,7 +83,6 @@ public class DataFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mTvTitle = (TextView) getActivity().findViewById(R.id.tv_title);
 
         Mtag = (Button) getActivity().findViewById(R.id.btn_tagcloud);
         Mdata = (Button) getActivity().findViewById(R.id.add);
@@ -182,16 +180,7 @@ public class DataFragment extends Fragment {
                 if(tagCloudFragment == null){
                     tagCloudFragment = new TagCloudFragment();
                 }
-//                Fragment addFragment = getFragmentManager().findFragmentByTag("add");
-//                Fragment lineFragment = getFragmentManager().findFragmentByTag("line");
-//                if((addFragment != null && !addFragment.isAdded()) | (lineFragment !=null && !lineFragment.isAdded())){
-//                    mTvTitle.setText("TagCloud");
-//                    getFragmentManager().beginTransaction().hide(addFragment).hide(lineFragment).add(R.id.fl_container, tagCloudFragment,"tag").addToBackStack(null).commitAllowingStateLoss();
-//                }else {
-                    mTvTitle.setText("TagCloud");
                     getFragmentManager().beginTransaction().replace(R.id.fl_container, tagCloudFragment,"tag").addToBackStack(null).commitAllowingStateLoss();
-//                }
-
             }
         });
 
@@ -201,14 +190,7 @@ public class DataFragment extends Fragment {
                 if(lineFragment == null){
                     lineFragment = new LineChartFragment();
                 }
-//                Fragment addFragment = getFragmentManager().findFragmentByTag("add");
-//                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");
-//                if((addFragment != null && !addFragment.isAdded()) | (tagFragment != null && !tagFragment.isAdded())){
-//                    getFragmentManager().beginTransaction().hide(tagFragment).hide(addFragment).add(R.id.fl_container, lineFragment,"line").addToBackStack(null).commitAllowingStateLoss();
-//                }else {
                     getFragmentManager().beginTransaction().replace(R.id.fl_container, lineFragment,"line").addToBackStack(null).commitAllowingStateLoss();
-//                }
-                mTvTitle.setText("Line");
             }
         });
 
@@ -233,4 +215,5 @@ public class DataFragment extends Fragment {
             }
         });
     }
+
 }

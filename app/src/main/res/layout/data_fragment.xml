@@ -4,66 +4,71 @@
              android:layout_height="match_parent"
             android:orientation="vertical"
             >
-<DatePicker
-            android:id="@+id/mydate"
+    <DatePicker
+                android:id="@+id/mydate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="-110dp"
+    />
+
+    <TextView android:id="@+id/info"
+              android:textColor="#F44336"
+              android:textAlignment="center"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="-50dp"/>
+
+    <EditText android:id="@+id/inputkey"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:hint="Please Input A Keyword Here !"
+              android:defaultFocusHighlightEnabled="true"
+        />
+    <LinearLayout android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_horizontal"
+              android:layout_marginTop="2dp">
+    <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="-110dp"
-/>
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/red"
+            android:text="process"/>
+    <NumberPicker
+            android:id="@+id/processpicker"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="emotion"
+            android:textColor="@color/purple_200"
+    />
+    <NumberPicker
+            android:id="@+id/emotionpicker"
+            android:layout_width="40dp"
+            android:background="@color/white"
+            android:layout_height="wrap_content"/>
 
-<TextView android:id="@+id/info"
-          android:textColor="#F44336"
-          android:textAlignment="center"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="-50dp"/>
-
-<EditText android:id="@+id/inputkey"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:hint="keyWords"
-/>
-<LinearLayout android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_horizontal"
-          android:layout_marginTop="2dp">
-<TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:text="process"/>
-<NumberPicker
-        android:id="@+id/processpicker"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"/>
-<TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:text="emotion"
-/>
-<NumberPicker
-        android:id="@+id/emotionpicker"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"/>
-
-<TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:text="energy"/>
-<NumberPicker
-        android:id="@+id/energypicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-</LinearLayout>
-
-<Button android:id="@+id/btn_add"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/teal_200"
-        android:layout_marginTop="3dp"
-        android:text="add">
-</Button>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="#4CAF50"
+            android:text="energy"/>
+    <NumberPicker
+            android:id="@+id/energypicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <Button android:id="@+id/btn_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/teal_200"
+            android:layout_marginTop="15dp"
+            android:text="add"
+            android:textColor="@color/black">
+    </Button>
 </LinearLayout>

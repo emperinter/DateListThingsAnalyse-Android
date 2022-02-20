@@ -34,8 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class TagCloudFragment extends Fragment {
-
-    private TextView mTvTitle;
     private Button Mline,Madd,Mtag;
     private DataFragment dataFragment;
     private LineChartFragment lineChartFragment;
@@ -127,7 +125,12 @@ public class TagCloudFragment extends Fragment {
                 AnyChartView anyChartView = view.findViewById(R.id.any_chart_view);
                 anyChartView.setProgressBar(view.findViewById(R.id.progress_bar));
                 TagCloud tagCloud = AnyChart.tagCloud();
-                tagCloud.title(username + "TagCloud");
+                for (String i : KeyMap.keySet()) {
+                    data.add(new CategoryValueDataEntry(i,String.valueOf(KeyMap.get(i)),KeyMap.get(i)));
+                }
+                tagCloud.data(data);
+
+                tagCloud.title(username + " TagCloud");
                 OrdinalColor ordinalColor = OrdinalColor.instantiate();
 
                 ordinalColor.colors(new String[] {
@@ -141,10 +144,6 @@ public class TagCloudFragment extends Fragment {
                 tagCloud.colorRange().enabled(true);
                 tagCloud.colorRange().colorLineSize(15d);
 
-                for (String i : KeyMap.keySet()) {
-                    data.add(new CategoryValueDataEntry(i,String.valueOf(KeyMap.get(i)),KeyMap.get(i)));
-                }
-                tagCloud.data(data);
                 anyChartView.setChart(tagCloud);
             }
         });
@@ -154,7 +153,6 @@ public class TagCloudFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mTvTitle = (TextView) getActivity().findViewById(R.id.tv_title);
 
         Mline = (Button) getActivity().findViewById(R.id.btn_lineanalyse);
         Madd = (Button) getActivity().findViewById(R.id.add);
@@ -166,21 +164,11 @@ public class TagCloudFragment extends Fragment {
         Mline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if(lineAnalyseFragment == null){
-//                    lineAnalyseFragment = new LineAnalyseFragment();
-//                }
+
                 if (lineChartFragment == null){
                     lineChartFragment = new LineChartFragment();
                 }
-//                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");
-//                Fragment addFragment = getFragmentManager().findFragmentByTag("add");
-//                if((tagFragment != null && !tagFragment.isAdded()) | (addFragment!=null && !addFragment.isAdded())){
-//                    getFragmentManager().beginTransaction().hide(tagFragment).hide(addFragment).add(R.id.fl_container, lineAnalyseFragment,"line").addToBackStack(null).commitAllowingStateLoss();
-//                    mTvTitle.setText("LineAnalyse");
-//                }else {
                     getFragmentManager().beginTransaction().replace(R.id.fl_container, lineChartFragment,"line").addToBackStack(null).commitAllowingStateLoss();
-                    mTvTitle.setText("LineAnalyse");
-//                }
             }
         });
 
@@ -190,15 +178,7 @@ public class TagCloudFragment extends Fragment {
                 if(dataFragment == null){
                     dataFragment = new DataFragment();
                 }
-//                Fragment lineFragment = getFragmentManager().findFragmentByTag("line");
-//                Fragment tagFragment = getFragmentManager().findFragmentByTag("tag");
-//                if((lineFragment != null && !lineFragment.isAdded()) | (tagFragment != null && !tagFragment.isAdded())){
-//                    getFragmentManager().beginTransaction().hide(lineFragment).hide(tagFragment).add(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
-//                    mTvTitle.setText("Data");
-//                }else {
                     getFragmentManager().beginTransaction().replace(R.id.fl_container, dataFragment).addToBackStack(null).commitAllowingStateLoss();
-                    mTvTitle.setText("Data");
-//                }
             }
         });
     }

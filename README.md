@@ -30,11 +30,11 @@
 - [X] 登录验证
 - [X] 基本的数据展示
 - [X] 数据添加
-- [x] 按tag-> line -> data依次点击会出现line和data视图重叠的现象
 
 ## 需要优化的
 
 - [X] 添加界面布局优化
+- [x] 按tag-> line -> data依次点击会出现line和data视图重叠的现象
 - [ ] 数据删除(看情况)
 - [ ] 数据更新(看情况)
 - [ ] 用户退出
@@ -45,5 +45,5 @@
 
 > 目前用的是AnyChart的可视化产品，对于NoCommercial的产品是免费的，其它则是要收费的。如有更好的开源替代产品欢迎留言，目前看到的产品基本没有词云图。还有的则是Echarts来开发。
 
-- [可视化：https://github.com/AnyChart/AnyChart-Android](https://github.com/AnyChart/AnyChart-Android)
+- [https://github.com/AnyChart/AnyChart-Android](https://github.com/AnyChart/AnyChart-Android)
 - [https://github.com/PhilJay/MPAndroidChart](https://github.com/PhilJay/MPAndroidChart)
