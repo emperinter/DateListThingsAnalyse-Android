@@ -71,4 +71,8 @@
             android:text="add"
             android:textColor="@color/black">
     </Button>
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="\n\t\t\t1.The Data will be replaced if it has been added.\n\t\t\t2.The keyword must be input."
+    />
 </LinearLayout>

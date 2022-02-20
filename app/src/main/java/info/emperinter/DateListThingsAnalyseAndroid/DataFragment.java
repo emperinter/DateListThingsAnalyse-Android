@@ -14,6 +14,7 @@ import android.widget.*;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.DbHelper;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.HttpResponseCallBack;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.Singleton;
+import org.json.JSONArray;
 import org.json.JSONException;
 import java.io.IOException;
 
@@ -143,12 +144,12 @@ public class DataFragment extends Fragment {
                         "\"energy\":"+getEnergy+"," +
                         "\"key\":\""+getKeyWords+"\"}";
 
-                Log.v("get_data_input",inputJson);
+                Log.v("origin_update_input",inputJson);
 
                 try {
                     Singleton.getInstance().doPostRequest(host+"/api/things/",inputJson, new HttpResponseCallBack() {
                         @Override
-                        public void getResponse(String response) throws JSONException {
+                        public void getResponse(String response) throws JSONException, IOException {
                             reqGet = response;
                             Log.v("get_data_json",reqGet);
                             if(reqGet.contains("things_id")) {
@@ -156,6 +157,68 @@ public class DataFragment extends Fragment {
                             }else if(reqGet.contains("exists")){
                                 getKey.setHint("list things with this date already exists.");
                                 infoText.setText("list things with this date already exists.!");
+                                try {
+                                    //已存在则查到thing_id并更新
+                                    Singleton.getInstance().doGetRequest(host + "/api/thing/query/?userid=" + user_id, new HttpResponseCallBack() {
+                                        @Override
+                                        public void getResponse(String response) throws JSONException, IOException {
+                                            reqGet = response;
+                                            JSONArray userJson = new JSONArray(reqGet);
+                                            int i = 0;
+                                            while (i < userJson.length()) {
+                                                int things_id = userJson.getJSONObject(i).getInt("things_id");
+                                                String getdate = userJson.getJSONObject(i).getString("date");
+                                                infoText.setText("found the same data with things_id: " + things_id + " and update it");
+                                                Log.v("update_getdate",getdate);
+                                                String getday = "";
+                                                String getmon = "";
+                                                if(getDay < 10){
+                                                    getday  = "0"+ getDay;
+                                                }else {
+                                                    getday = String.valueOf(getDay);
+                                                }
+                                                if(getMonth < 10){
+                                                    getmon = "0" + getMonth;
+                                                }else {
+                                                    getmon = String.valueOf(getMonth);
+                                                }
+                                                if (getdate.contains(getYear+"-"+getmon+"-"+getday) ){
+                                                    //查到things_id 并更新
+                                                    inputJson =
+                                                            "{\"things_id\":" + things_id + "," +
+                                                            "\"userid\":\"" + host + "/api/users/" + user_id + "/\"," +
+                                                            "\"date\":\"" + getYear + "-" + getMonth + "-" + getDay + "\"," +
+                                                            "\"process\":" + getProcess + "," +
+                                                            "\"emotion\":" + getEmotion + "," +
+                                                            "\"energy\":" + getEnergy + "," +
+                                                            "\"key\":\"" + getKeyWords + "\"}";
+                                                    Log.v("update_json",inputJson);
+                                                    try {
+                                                        Singleton.getInstance().doPutRequest(host + "/api/things/"+things_id+"/", inputJson, new HttpResponseCallBack() {
+                                                            @Override
+                                                            public void getResponse(String response) throws JSONException, IOException {
+                                                                reqGet = response;
+                                                                Log.v("update_ended", reqGet);
+                                                                if (reqGet.contains(String.valueOf(things_id))) {
+                                                                    infoText.setText("update successful with the same date!");
+                                                                } else {
+                                                                    infoText.setText("update failed for some unknow things !");
+                                                                }
+                                                            }
+                                                        });
+                                                    }catch (Exception e){
+                                                        infoText.setText(e.toString());
+                                                    }
+                                                    break;
+                                                }
+                                                i += 1;
+                                            }
+                                        }
+                                    });
+                                }catch (IOException e){
+                                    infoText.setText(e.toString());
+                                }
+
                             }else if(reqGet.contains("This field may not be blank.") && reqGet.contains("key")){
                                 Toast.makeText(getActivity().getBaseContext(),"This field may not be blank !",Toast.LENGTH_SHORT).show();
                                 infoText.setText("KeyWord may not be blank !");
