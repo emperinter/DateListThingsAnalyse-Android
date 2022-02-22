@@ -44,7 +44,6 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     private Button Madd,Mline,Mtag;
     private LineChartFragment lineAnalyseFragment;
     private TagCloudFragment tagCloudFragment;
-    private LineChartFragment.IOnMessageClick listener;//申明接口
     private SQLiteDatabase db;
     private DbHelper myDb;
     private int user_id;
@@ -81,10 +80,7 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
         return fragment;
     }
 
-    //声明接口，给Activity传参！在ContainerActivity实现该接口！
-    public interface IOnMessageClick{
-        void onClick(String text);
-    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
@@ -361,12 +357,6 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try{
-            listener = (LineChartFragment.IOnMessageClick) context;   //给Activity传参
-        }catch (ClassCastException ex){
-            throw  new ClassCastException("Activity 必须实现IOnMessageClick 接口!");
-        }
-
     }
 
     @Override
@@ -451,6 +441,7 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
         Log.i("VAL SELECTED",
                 "Value: " + e.getY() + ", xIndex: " + e.getX()
                         + ", DataSet index: " + h.getDataSetIndex());
+
     }
 
     @Override

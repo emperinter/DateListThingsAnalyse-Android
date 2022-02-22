@@ -7,11 +7,11 @@
                 android:background="#03FF9800"
                 tools:context="info.emperinter.DateListThingsAnalyseAndroid.ContainerActivity">
     <LinearLayout
-                  android:id="@+id/fl_liner"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:background="@color/white"
-                  android:layout_weight="1">
+            android:id="@+id/fl_liner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:layout_weight="1" android:orientation="vertical">
         <FrameLayout
                 android:id="@+id/fl_container"
                 android:layout_width="match_parent"

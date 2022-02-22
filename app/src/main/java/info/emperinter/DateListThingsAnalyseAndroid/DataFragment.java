@@ -22,12 +22,10 @@ public class DataFragment extends Fragment {
     private Button Mdata,mBtnAdd,Mtag,Mline;
     private TagCloudFragment tagCloudFragment;
     private LineChartFragment lineFragment;
-    private LineChartFragment.IOnMessageClick listener;//申明接口
     private SQLiteDatabase db;
     private DbHelper myDb;
     private int user_id;
     private String host = "";
-    private String username;
     private String reqGet = "NO";
     private String url;
     private int getProcess,getEmotion,getEnergy,getYear,getMonth,getDay;
@@ -52,7 +50,6 @@ public class DataFragment extends Fragment {
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
             user_id = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));;
-            username = cursor.getString(cursor.getColumnIndexOrThrow("user_name"));
             host = cursor.getString(cursor.getColumnIndexOrThrow("host"));
         }
         db.close();
@@ -118,7 +115,6 @@ public class DataFragment extends Fragment {
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
             user_id = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));;
-            username = cursor.getString(cursor.getColumnIndexOrThrow("user_name"));
             host = cursor.getString(cursor.getColumnIndexOrThrow("host"));
         }
         db.close();
@@ -192,13 +188,11 @@ public class DataFragment extends Fragment {
                                                             "\"emotion\":" + getEmotion + "," +
                                                             "\"energy\":" + getEnergy + "," +
                                                             "\"key\":\"" + getKeyWords + "\"}";
-                                                    Log.v("update_json",inputJson);
                                                     try {
                                                         Singleton.getInstance().doPutRequest(host + "/api/things/"+things_id+"/", inputJson, new HttpResponseCallBack() {
                                                             @Override
                                                             public void getResponse(String response) throws JSONException, IOException {
                                                                 reqGet = response;
-                                                                Log.v("update_ended", reqGet);
                                                                 if (reqGet.contains(String.valueOf(things_id))) {
                                                                     infoText.setText("update successful with the same date!");
                                                                 } else {
