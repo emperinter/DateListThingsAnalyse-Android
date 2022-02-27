@@ -39,8 +39,6 @@ import java.util.ArrayList;
 
 
 public class LineChartFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener {
-
-
     private Button Madd,Mline,Mtag;
     private LineChartFragment lineAnalyseFragment;
     private TagCloudFragment tagCloudFragment;
@@ -56,8 +54,6 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     private TextView info;
 
     private LineChart chart;
-
-
 
     private ArrayList<String> dateList = new ArrayList<String>();
     private ArrayList<Integer> processList = new ArrayList<Integer>();

@@ -15,6 +15,6 @@ public class ContainerActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_container);
         Objects.requireNonNull(getSupportActionBar()).hide();// 隐藏ActionBar
-        getFragmentManager().beginTransaction().add(R.id.fl_container,dataFragment,"add").commitAllowingStateLoss();
+        getFragmentManager().beginTransaction().replace(R.id.fl_container,dataFragment,"add").commitAllowingStateLoss();
     }
 }
