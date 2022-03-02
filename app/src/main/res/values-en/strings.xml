@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Daily Status</string>
+    <string name="dash">18</string>
+    <string name="tag_cloud">Tag Cloud</string>
+    <string name="add_data">Add Status</string>
+    <string name="line_chart">Daily Line</string>
+</resources>

@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">DateListThingsAnalyseAndroid</string>
+    <string name="app_name">每日状态</string>
     <string name="dash">18</string>
+    <string name="tag_cloud">词云图</string>
+    <string name="add_data">添加状态</string>
+    <string name="line_chart">每日曲线</string>
 </resources>

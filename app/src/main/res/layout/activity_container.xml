@@ -54,7 +54,7 @@
         <TextView
                 android:layout_width="38dp"
                 android:layout_height="wrap_content"
-                android:text="Tag Cloud"
+                android:text="@string/tag_cloud"
                 android:textSize="8dp"
                 android:textColor="#3298DB"
                 android:textAlignment="center"
@@ -63,7 +63,7 @@
 
         <TextView
                 android:layout_width="38dp"
-                android:text="Add Data"
+                android:text="@string/add_data"
                 android:textSize="8dp"
                 android:textColor="#FF5722"
                 android:textAlignment="center"
@@ -72,7 +72,7 @@
         <TextView
                 android:layout_width="38dp"
                 android:layout_height="wrap_content"
-                android:text="Line Chart"
+                android:text="@string/line_chart"
                 android:textSize="8dp"
                 android:textColor="#4CAF50"
                 android:textAlignment="center"
