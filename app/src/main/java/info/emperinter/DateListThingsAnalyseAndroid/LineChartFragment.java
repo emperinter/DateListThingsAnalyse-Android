@@ -27,6 +27,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.DbHelper;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.HttpResponseCallBack;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.Singleton;
@@ -65,6 +66,7 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     private int emotion;
     private int energy;
     private String get_date;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
 
     //传参
@@ -83,6 +85,13 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.linechart_fragment,container,false);  //设置布局文件
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext().getApplicationContext());
+        mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
+        Bundle bundle = new Bundle();
+        bundle.putString("start","yes");
+        mFirebaseAnalytics.logEvent("LineChart",bundle);
 
 
         //user_id 获取

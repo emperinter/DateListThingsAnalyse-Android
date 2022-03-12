@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.AuthApi;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.DbHelper;
 import org.json.JSONArray;
@@ -24,11 +25,20 @@ public class LoginActivity extends AppCompatActivity {
     public AuthApi api = new AuthApi();
     private SQLiteDatabase db;
     private DbHelper dbHelper;
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loginactivity);
         Objects.requireNonNull(getSupportActionBar()).hide();// 隐藏ActionBar
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(LoginActivity.this);
+        mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
+        Bundle bundle = new Bundle();
+        bundle.putString("start","yes");
+        mFirebaseAnalytics.logEvent("TagCloud",bundle);
 
 
         LoginBtn = findViewById(R.id.login_btn);

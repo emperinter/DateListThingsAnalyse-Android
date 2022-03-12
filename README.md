@@ -42,8 +42,9 @@
 
 
 # Special Thanks
-
-> 目前用的是AnyChart的可视化产品，对于NoCommercial的产品是免费的，其它则是要收费的。如有更好的开源替代产品欢迎留言，目前看到的产品基本没有词云图。还有的则是Echarts来开发。
-
-- [https://github.com/AnyChart/AnyChart-Android](https://github.com/AnyChart/AnyChart-Android)
+- [https://github.com/alhazmy13/AndroidWordCloud](https://github.com/alhazmy13/AndroidWordCloud)
 - [https://github.com/PhilJay/MPAndroidChart](https://github.com/PhilJay/MPAndroidChart)
+
+# LICENSE 
+
+- NO COMMERICAL USE IN ANY WAY

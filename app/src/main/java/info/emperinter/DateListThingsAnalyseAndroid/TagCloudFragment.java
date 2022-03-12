@@ -1,11 +1,14 @@
 package info.emperinter.DateListThingsAnalyseAndroid;
 
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -22,9 +25,13 @@ import com.anychart.chart.common.dataentry.CategoryValueDataEntry;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.charts.TagCloud;
 import com.anychart.scales.OrdinalColor;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.DbHelper;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.HttpResponseCallBack;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.Singleton;
+import net.alhazmy13.wordcloud.ColorTemplate;
+import net.alhazmy13.wordcloud.WordCloud;
+import net.alhazmy13.wordcloud.WordCloudView;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -32,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class TagCloudFragment extends Fragment {
     private Button Mline,Madd,Mtag;
@@ -43,12 +51,17 @@ public class TagCloudFragment extends Fragment {
     private String host = "";
     private String reqGet = "";
     private String url;
+    private ProgressBar processBar;
+
+    List<WordCloud> list ;
 
     // keyword的HashMap
     HashMap<String, Integer> KeyMap = new HashMap<String, Integer>();
     private int user_id;
     private String key = "";
-    private List<DataEntry> data = new ArrayList<>();
+
+    private FirebaseAnalytics mFirebaseAnalytics;
+
 
     //传参
     public static  TagCloudFragment newInstance(String title){
@@ -60,6 +73,8 @@ public class TagCloudFragment extends Fragment {
     }
 
 
+
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
     @Override
@@ -68,6 +83,15 @@ public class TagCloudFragment extends Fragment {
 
         //user_id 获取
         myDb = new DbHelper(getContext().getApplicationContext(),"user.db", null, 1);
+
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext().getApplicationContext());
+        mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
+        Bundle bundle = new Bundle();
+        bundle.putString("start","yes");
+        mFirebaseAnalytics.logEvent("TagCloud",bundle);
+
         db = myDb.getWritableDatabase();
         Cursor cursor = db.query("user", null, null, null, null, null, null);
         cursor.moveToFirst();
@@ -117,34 +141,25 @@ public class TagCloudFragment extends Fragment {
         return  view;
     }
 
+
     public void TagChart(View view,HashMap<String,Integer> KeyMap){
         getActivity().runOnUiThread(new Runnable() {
+            @SuppressLint("WrongConstant")
             @Override
             public void run() {
+                processBar = view.findViewById(R.id.progress_bar);
+                WordCloudView wordCloud = view.findViewById(R.id.wordCloud);
+                list = new ArrayList<>();
                 // 图标基本设置
-                AnyChartView anyChartView = view.findViewById(R.id.any_chart_view);
-                anyChartView.setProgressBar(view.findViewById(R.id.progress_bar));
-                TagCloud tagCloud = AnyChart.tagCloud();
                 for (String i : KeyMap.keySet()) {
-                    data.add(new CategoryValueDataEntry(i,String.valueOf(KeyMap.get(i)),KeyMap.get(i)));
+                    list.add(new WordCloud(i,KeyMap.get(i)) );
                 }
-                tagCloud.data(data);
+                wordCloud.setDataSet(list);
+                wordCloud.setSize(view.getHeight() / 3,view.getWidth() / 3);
+                wordCloud.setColors(ColorTemplate.MATERIAL_COLORS);
+                wordCloud.notifyDataSetChanged();
+                processBar.setVisibility(View.INVISIBLE);
 
-                tagCloud.title(username + " TagCloud");
-                OrdinalColor ordinalColor = OrdinalColor.instantiate();
-
-                ordinalColor.colors(new String[] {
-                        "#26959f", "#f18126", "#3b8ad8", "#60727b", "#e24b26", "#FF03DAC5",
-                        "#eb6b34", "#ae34eb", "#34eb68", "#4c34eb", "#eb347d", "#34eba8"
-                });
-
-                tagCloud.colorScale(ordinalColor);
-                tagCloud.angles(new Double[] {-90d, 0d, 90d});
-
-                tagCloud.colorRange().enabled(true);
-                tagCloud.colorRange().colorLineSize(15d);
-
-                anyChartView.setChart(tagCloud);
             }
         });
     }

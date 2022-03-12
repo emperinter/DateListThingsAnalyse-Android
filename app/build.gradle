@@ -1,6 +1,10 @@
+//apply plugin: 'com.android.application'
+//apply plugin: 'com.google.gms.google-services'
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
+
 
 android {
     compileSdkVersion 32
@@ -39,4 +43,14 @@ dependencies {
     implementation 'com.github.AnyChart:AnyChart-Android:1.1.2'
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    // Import the Firebase BoM (see: https://firebase.google.com/docs/android/learn-more#bom)
+    implementation platform('com.google.firebase:firebase-bom:28.3.0')
+
+    // Firebase Analytics (Java)
+    implementation 'com.google.firebase:firebase-analytics'
+
+    implementation 'com.google.firebase:firebase-core:15.0.0'
+
+    implementation 'net.alhazmy13.wordcloud:library:0.2.0-beta'
 }

@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.*;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.DbHelper;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.HttpResponseCallBack;
 import info.emperinter.DateListThingsAnalyseAndroid.Data.Singleton;
@@ -32,6 +33,7 @@ public class DataFragment extends Fragment {
     private String getKeyWords;
 
     private String inputJson = "";
+    private FirebaseAnalytics mFirebaseAnalytics;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -42,6 +44,13 @@ public class DataFragment extends Fragment {
 //       软键盘弹出时，整个界面不会变动，输入框也不会顶起，这种设置
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams. SOFT_INPUT_ADJUST_NOTHING);
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity().getBaseContext());
+        mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
+        Bundle bundle = new Bundle();
+        bundle.putString("start","yes");
+        mFirebaseAnalytics.logEvent("Data",bundle);
 
         //user_id 获取
         myDb = new DbHelper(getContext().getApplicationContext(),"user.db", null, 1);
