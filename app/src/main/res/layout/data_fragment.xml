@@ -22,7 +22,7 @@
     <EditText android:id="@+id/inputkey"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:hint="Please Input A Keyword Here !"
+              android:hint="@string/input_key"
               android:defaultFocusHighlightEnabled="true"
         />
     <LinearLayout android:layout_width="wrap_content"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:textColor="@color/red"
-            android:text="process"/>
+            android:text="@string/process"/>
     <NumberPicker
             android:id="@+id/processpicker"
             android:layout_width="40dp"
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="emotion"
+            android:text="@string/emotion"
             android:textColor="@color/purple_200"
     />
     <NumberPicker
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:textColor="#4CAF50"
-            android:text="energy"/>
+            android:text="@string/energy"/>
     <NumberPicker
             android:id="@+id/energypicker"
             android:layout_width="wrap_content"
@@ -68,11 +68,11 @@
             android:layout_height="wrap_content"
             android:background="@color/teal_200"
             android:layout_marginTop="15dp"
-            android:text="add"
+            android:text="@string/add"
             android:textColor="@color/black">
     </Button>
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:text="\n\t\t\t1.The Data will be replaced if it has been added.\n\t\t\t2.The keyword must be input."
+              android:text="@string/input_tips"
     />
 </LinearLayout>

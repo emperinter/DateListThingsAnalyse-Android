@@ -53,6 +53,8 @@ public class TagCloudFragment extends Fragment {
     private String url;
     private ProgressBar processBar;
 
+
+
     List<WordCloud> list ;
 
     // keyword的HashMap
@@ -154,6 +156,7 @@ public class TagCloudFragment extends Fragment {
                 for (String i : KeyMap.keySet()) {
                     list.add(new WordCloud(i,KeyMap.get(i)) );
                 }
+
                 wordCloud.setDataSet(list);
                 wordCloud.setSize(view.getHeight() / 3,view.getWidth() / 3);
                 wordCloud.setColors(ColorTemplate.MATERIAL_COLORS);
@@ -207,7 +210,7 @@ public class TagCloudFragment extends Fragment {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_BACK){
-                    Toast.makeText(getActivity(), "exit!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.exit), Toast.LENGTH_SHORT).show();
                     getActivity().moveTaskToBack(true);
                     getActivity().finish();
                     System.exit(0);

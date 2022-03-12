@@ -7,12 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.*;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import com.github.mikephil.charting.charts.LineChart;
@@ -37,10 +36,13 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class LineChartFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener {
     private Button Madd,Mline,Mtag;
+
     private LineChartFragment lineAnalyseFragment;
     private TagCloudFragment tagCloudFragment;
     private SQLiteDatabase db;
@@ -52,6 +54,7 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     private String url;
     private DataFragment dataFragment;
     private ProgressBar processBar;
+
     private TextView info;
 
     private LineChart chart;
@@ -65,6 +68,8 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
     private int process;
     private int emotion;
     private int energy;
+    private  int loading = 0;
+
     private String get_date;
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -118,7 +123,7 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
                     if(reqGet.contains("things_id")){
                         JSONArray userJson = new JSONArray(reqGet);
                         for (int i = 0;i < userJson.length();i++){
-                            things_id = userJson.getJSONObject(i).getInt("things_id");
+//                            things_id = userJson.getJSONObject(i).getInt("things_id");
                             get_date = userJson.getJSONObject(i).getString("date");
                             process = userJson.getJSONObject(i).getInt("process");
                             emotion = userJson.getJSONObject(i).getInt("emotion");
@@ -159,12 +164,14 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
 
 
     public void LineChart(View view, ArrayList<String> dateList, ArrayList<Integer> processList, ArrayList<Integer> emotionList, ArrayList<Integer> energyList){
-
+                loading = 0;
                 processBar = (ProgressBar) view.findViewById(R.id.progress_bar);
                 info = (TextView) view.findViewById(R.id.info);
+
+
                 chart = (LineChart) view.findViewById(R.id.chart1);
                 chart.getDescription().setEnabled(false);
-                chart.setNoDataText("Loading...");
+                chart.setNoDataText("");
                 chart.invalidate();
 
                 chart.setNoDataTextColor(Color.rgb(0,0,0));
@@ -210,9 +217,9 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
                 ArrayList<ILineDataSet> dataSets = new ArrayList<>();
 
                 String[] tag = new  String[3];
-                tag[0] = "process";
-                tag[1] = "emotion";
-                tag[2] = "energy";
+                tag[0] = getString(R.string.process_tag);
+                tag[1] = getString(R.string.emotion_tag);
+                tag[2] = getString(R.string.energy_tag);
 
                 int thingsCount = dateList.size();
 
@@ -268,13 +275,21 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
                     else
                         d.setDrawFilled(true);
                     d.setFillColor(color);
-
                     dataSets.add(d);
+                }
+
+                while (loading < 100){
+                    loading = loading + 10;
+                    processBar.setProgress(loading);
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
 
                 for (ILineDataSet iSet : dataSets) {
-
                     LineDataSet set = (LineDataSet) iSet;
                     set.setDrawValues(true);
                     set.setValueTextSize(15f);
@@ -286,9 +301,11 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
 
                 LineData data = new LineData(dataSets);
 
+
+
+
                 //消失
                 processBar.setVisibility(View.INVISIBLE);
-//                info.setText("Data Dealing Successful !");
                 info.setVisibility(View.INVISIBLE);
 
                 chart.setData(data);
@@ -311,6 +328,7 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
                 //图像里
                 l.setDrawInside(false);
     }
+
 
 
     @Override
@@ -384,7 +402,7 @@ public class LineChartFragment extends Fragment implements OnChartGestureListene
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_BACK){
-                    Toast.makeText(getActivity(), "exit!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.exit), Toast.LENGTH_SHORT).show();
                     getActivity().moveTaskToBack(true);
                     getActivity().finish();
                     System.exit(0);

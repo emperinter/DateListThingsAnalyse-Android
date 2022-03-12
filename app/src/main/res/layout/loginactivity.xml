@@ -6,7 +6,7 @@
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:text="DateListThingsAnalyse-Android"
+              android:text="@string/app_name"
               android:textAlignment="center"
               android:textColor="@color/black"
               android:layout_marginTop="60dp"
@@ -14,13 +14,13 @@
     <EditText android:id="@+id/username"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:hint="username"
+              android:hint="@string/username"
               android:layout_marginTop="60dp"
     />
     <EditText android:id="@+id/password"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:hint="password"
+              android:hint="@string/password"
               android:layout_marginTop="8dp"
     />
     <EditText android:id="@+id/host"
@@ -32,20 +32,20 @@
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_marginTop="8dp"
-              android:text="testAccount: test/test testHost: https://plan.emperinter.ga"/>
+              android:text="@string/app_login_info"/>
     <Button
             android:id="@+id/login_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/purple_700"
-            android:hint="Login Or Register"
+            android:hint="@string/login_or_register"
             android:textColorHint="#F44336"
             android:layout_marginTop="18dp"
     />
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_marginTop="50dp"
-              android:text="This Product need a host to login,Not for Localhost.If you wanna know more about it ,you can find it here: https://github.com/emperinter/DateListThingsAnalyse-Android"/>
+              android:text="@string/product_info"/>
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"

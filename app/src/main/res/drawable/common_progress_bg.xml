@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--背景-->
+    <item android:id="@android:id/background">
+        <shape>
+            <gradient
+                    android:angle="270"
+                    android:centerY="0.75"
+                    android:endColor="#f0f0f0"
+                    android:startColor="#f0f0f0" />
+            <!--边线-->
+            <stroke
+                    android:width="0px"
+                    android:color="#00A43030" />
+            <!--定义背景圆角-->
+            <corners
+                    android:bottomLeftRadius="25dp"
+                    android:bottomRightRadius="25dp"
+                    android:topLeftRadius="25dp"
+                    android:topRightRadius="25dp" />
+        </shape>
+    </item>
+    <!--进度-->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <gradient
+                        android:startColor="#F44336"
+                        android:centerColor="#BB86FC"
+                        android:endColor="#00FF0A"/>
+                <corners
+                        android:bottomLeftRadius="25dp"
+                        android:bottomRightRadius="25dp"
+                        android:topLeftRadius="25dp"
+                        android:topRightRadius="25dp" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

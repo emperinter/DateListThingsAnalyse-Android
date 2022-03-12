@@ -4,4 +4,23 @@
     <string name="tag_cloud">词云图</string>
     <string name="add_data">添加状态</string>
     <string name="line_chart">每日曲线</string>
+    <string name="loading">加载中...</string>
+    <string name="process_tag">进度</string>
+    <string name="emotion_tag">情绪</string>
+    <string name="energy_tag">精力</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+    <string name="app_login_info">测试用户: test/test 测试主机: https://plan.emperinter.ga</string>
+    <string name="login_or_register">登录/注册</string>
+    <string name="product_info"> This Product need a host to login,Not for Localhost. \n If you wanna know more about it ,you
+        can find it here: \n https://github.com/emperinter/DateListThingsAnalyse-Android
+    </string>
+    <string name="input_key">请在这儿输入一个关键词(必需)!</string>
+    <string name="process">进度</string>
+    <string name="emotion">情绪</string>
+    <string name="energy">精力</string>
+    <string name="add">添加 / 更新</string>
+    <string name="input_tips">\n\t\t\t 1.数据重复添加极为更新 \n\t\t\t 2.关键词不能为空
+    </string>
+    <string name="exit">exit!</string>
 </resources>

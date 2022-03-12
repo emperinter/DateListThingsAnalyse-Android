@@ -271,7 +271,7 @@ public class DataFragment extends Fragment {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_BACK){
-                    Toast.makeText(getActivity(), "exit!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.exit), Toast.LENGTH_SHORT).show();
                     getActivity().moveTaskToBack(true);
                     getActivity().finish();
                     System.exit(0);

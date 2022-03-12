@@ -4,4 +4,24 @@
     <string name="tag_cloud">Tag Cloud</string>
     <string name="add_data">Add Status</string>
     <string name="line_chart">Daily Line</string>
+    <string name="loading">Loading...</string>
+    <string name="process_tag">process</string>
+    <string name="emotion_tag">emotion</string>
+    <string name="energy_tag">energy</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="app_login_info">TestAccount: test/test TestHost: https://plan.emperinter.ga</string>
+    <string name="login_or_register">Login Or Register</string>
+    <string name="product_info"> This Product need a host to login,Not for Localhost. \n If you wanna know more about it ,you
+        can find it here: \n https://github.com/emperinter/DateListThingsAnalyse-Android
+    </string>
+    <string name="input_key">Please Input A Keyword Here !</string>
+    <string name="process">process</string>
+    <string name="emotion">emotion</string>
+    <string name="energy">energy</string>
+    <string name="add">Add / Update</string>
+    <string name="input_tips">\n\t\t\t 1.The Data will be replaced if it has been added. \n\t\t\t 2.The keyword must be
+        input.
+    </string>
+    <string name="exit">exit!</string>
 </resources>
